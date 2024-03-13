@@ -6,6 +6,7 @@ import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from './database/database.module';
 import { AuthenticationModule } from './authentication/authentication.module';
 import * as Joi from '@hapi/joi';
+import { GlobalExceptionFilter } from './exceptionFilter/exception-filter';
 
 @Module({
   imports: [UsersModule, ConfigModule.forRoot({
@@ -20,6 +21,10 @@ import * as Joi from '@hapi/joi';
     envFilePath: [`.env.${process.env.NODE_ENV}`,`.env`]
   }), DatabaseModule, AuthenticationModule],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService,
+    {
+			provide: 'APP_FILTER',
+			useClass: GlobalExceptionFilter,
+		},],
 })
 export class AppModule {}

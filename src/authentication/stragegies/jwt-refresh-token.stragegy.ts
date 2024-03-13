@@ -7,34 +7,29 @@ import { User } from 'src/users/entities/users.entity';
 import { UsersService } from 'src/users/users.service';
 import { AuthenticationService } from '../authentication.service';
 import { Request } from 'express';
+import { SessionService } from '../session.service';
 
 @Injectable()
 export class JwtRefreshTokenStrategy extends PassportStrategy(
-	Strategy,
-	'refresh_token',
+  Strategy,
+  'refresh_token',
 ) {
-	constructor(
-		private readonly userService: UsersService,
-		private readonly configService: ConfigService,
-		private readonly authenService: AuthenticationService,
-	) {
-		super({
-			jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-			ignoreExpiration: false,
-			secretOrKey: configService.get<string>('REFRESH_TOKEN_KEY'),
-			passReqToCallback: true,
-		});
-	}
+  constructor(
+    private readonly sessionService: SessionService,
+    private readonly configService: ConfigService,
+  ) {
+    super({
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      ignoreExpiration: false,
+      secretOrKey: configService.get<string>('REFRESH_TOKEN_KEY'),
+      passReqToCallback: true,
+    });
+  }
 
-	async validate(request: Request, payload: TokenPayload): Promise<User> {
-		if ( await this.authenService.checkIfRefreshMatched(
-			payload.user_id
-			,request.headers.authorization.split('Bearer ')[1]
-		)) {
-			return await this.userService.findById(payload.user_id)
-		}
-		throw new UnauthorizedException
-		
-		
-	}
+  async validate(request: Request, payload: TokenPayload): Promise<User> {
+    if (!(await this.sessionService.findById(payload.session_id))) {
+      throw new UnauthorizedException();
+    }
+    throw new UnauthorizedException();
+  }
 }

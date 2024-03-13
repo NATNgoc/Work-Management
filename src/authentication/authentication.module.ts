@@ -12,6 +12,8 @@ import { RefreshToken } from './entities/refresh-token.entity';
 import { KeyService } from './key.service';
 import { JwtRefreshTokenStrategy } from './stragegies/jwt-refresh-token.stragegy';
 import { User } from 'src/users/entities/users.entity';
+import { Session } from './entities/session.entity';
+import { SessionService } from './session.service';
 
 @Module({
   imports: 
@@ -19,7 +21,7 @@ import { User } from 'src/users/entities/users.entity';
     UsersModule, 
     ConfigModule,
     JwtModule.register({}),
-    TypeOrmModule.forFeature([RefreshToken,User]),
+    TypeOrmModule.forFeature([RefreshToken,User, Session]),
     PassportModule
   ],
   controllers: [AuthenticationController],
@@ -30,6 +32,7 @@ import { User } from 'src/users/entities/users.entity';
     JwtAccessTokenStrategy,
     JwtRefreshTokenStrategy,
     KeyService,
+    SessionService
   ],
   exports: []
 })
