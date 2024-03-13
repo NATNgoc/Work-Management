@@ -11,6 +11,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { RefreshToken } from './entities/refresh-token.entity';
 import { KeyService } from './key.service';
 import { JwtRefreshTokenStrategy } from './stragegies/jwt-refresh-token.stragegy';
+import { User } from 'src/users/entities/users.entity';
 
 @Module({
   imports: 
@@ -18,7 +19,7 @@ import { JwtRefreshTokenStrategy } from './stragegies/jwt-refresh-token.stragegy
     UsersModule, 
     ConfigModule,
     JwtModule.register({}),
-    TypeOrmModule.forFeature([RefreshToken]),
+    TypeOrmModule.forFeature([RefreshToken,User]),
     PassportModule
   ],
   controllers: [AuthenticationController],

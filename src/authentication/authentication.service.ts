@@ -1,10 +1,9 @@
 import { ConflictException, HttpException, HttpStatus, Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
-import RegisterDto, { SignUpDto } from './dto/sign-up.authentication.dto';
+import { SignUpDto } from './dto/sign-up.authentication.dto';
 import * as argon2 from "argon2";
-import { ConfigService } from '@nestjs/config';
-import { JwtService } from '@nestjs/jwt';
 import { KeyService } from './key.service';
+import { User } from 'src/users/entities/users.entity';
 
 @Injectable()
 export class AuthenticationService {
@@ -13,7 +12,7 @@ export class AuthenticationService {
     private readonly keyService: KeyService
   ) {}
  
-  public async signUp(registrationData: SignUpDto) {
+  public async signUp(registrationData: SignUpDto): Promise<User|null> {
     const hashedPassword: string = await argon2.hash(registrationData.password);
     return await this.usersService.createNew({
       ...registrationData,
@@ -21,7 +20,7 @@ export class AuthenticationService {
     });
   }
 
-  public async getAuthenticatedUser(email: string, plainTextPassword: string) {
+  public async getAuthenticatedUser(email: string, plainTextPassword: string): Promise<User|null> {
       const user = await this.usersService.checkExistsByEmail(email);
       if (!user) {
           throw new UnauthorizedException
@@ -31,7 +30,7 @@ export class AuthenticationService {
     
   }
    
-  public async checkIfRefreshMatched(userId, refreshToken): Promise<boolean> {
+  public async checkIfRefreshMatched(userId: string, refreshToken: string): Promise<boolean> {
       const user = await this.keyService.findWithUserId(userId)
       if (!user) {
         throw new UnauthorizedException
@@ -40,8 +39,8 @@ export class AuthenticationService {
       return true
   }
 
-  private async verifyPassword(plainTextPassword: string, hashedPassword: string) {
-    const isPasswordMatching = await argon2.verify(
+  private async verifyPassword(plainTextPassword: string, hashedPassword: string): Promise<void> {
+    const isPasswordMatching: boolean = await argon2.verify(
       hashedPassword,
       plainTextPassword
     );
