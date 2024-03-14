@@ -10,24 +10,36 @@ import { GlobalExceptionFilter } from './exceptionFilter/exception-filter';
 import { WorkspaceModule } from './workspace/workspace.module';
 import { TaskModule } from './task/task.module';
 import { NotificationModule } from './notification/notification.module';
+import { SystemparamsModule } from './systemparams/systemparams.module';
 
 @Module({
-  imports: [UsersModule, ConfigModule.forRoot({
-    validationSchema: Joi.object({
+  imports: [
+    UsersModule,
+    ConfigModule.forRoot({
+      validationSchema: Joi.object({
         POSTGRES_HOST: Joi.string().required(),
         POSTGRES_PORT: Joi.number().required(),
         POSTGRES_USER: Joi.string().required(),
         POSTGRES_PASSWORD: Joi.string().required(),
         POSTGRES_DB: Joi.string().required(),
         PORT: Joi.number(),
+      }),
+      envFilePath: [`.env.${process.env.NODE_ENV}`, `.env`],
     }),
-    envFilePath: [`.env.${process.env.NODE_ENV}`,`.env`]
-  }), DatabaseModule, AuthenticationModule, WorkspaceModule, TaskModule, NotificationModule],
+    DatabaseModule,
+    AuthenticationModule,
+    WorkspaceModule,
+    TaskModule,
+    NotificationModule,
+    SystemparamsModule,
+  ],
   controllers: [AppController],
-  providers: [AppService,
+  providers: [
+    AppService,
     {
-			provide: 'APP_FILTER',
-			useClass: GlobalExceptionFilter,
-		},],
+      provide: 'APP_FILTER',
+      useClass: GlobalExceptionFilter,
+    },
+  ],
 })
 export class AppModule {}

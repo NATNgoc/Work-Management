@@ -1,15 +1,31 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { WorkspaceService } from './workspace.service';
-import { CreateWorkspaceDto } from './dto/create-workspace.dto';
 import { UpdateWorkspaceDto } from './dto/update-workspace.dto';
+import { SystemparamsService } from 'src/systemparams/systemparams.service';
+import { ConfigKey } from 'src/common/constaints';
 
-@Controller('workspace')
+@Controller('workspaces')
 export class WorkspaceController {
-  constructor(private readonly workspaceService: WorkspaceService) {}
+  constructor(
+    private readonly workspaceService: WorkspaceService,
+    private readonly systemParamsService: SystemparamsService,
+  ) {}
 
   @Post()
-  create(@Body() createWorkspaceDto: CreateWorkspaceDto) {
-    return this.workspaceService.create(createWorkspaceDto);
+  async create() {
+    return {
+      result: await this.systemParamsService.getValueByKey(
+        ConfigKey.MAXIMUM_WORKSPACES_PER_USER,
+      ),
+    };
   }
 
   @Get()
@@ -23,7 +39,10 @@ export class WorkspaceController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateWorkspaceDto: UpdateWorkspaceDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateWorkspaceDto: UpdateWorkspaceDto,
+  ) {
     return this.workspaceService.update(+id, updateWorkspaceDto);
   }
 

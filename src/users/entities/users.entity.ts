@@ -1,12 +1,19 @@
 import { Exclude } from 'class-transformer';
+import { Session } from 'src/authentication/entities/session.entity';
+import { WorkspaceMember } from 'src/workspace/entities/workspace-member.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-  Unique,
+  OneToMany,
 } from 'typeorm';
+
+export enum UserRole {
+  ADMIN = 'admin',
+  USER = 'user',
+}
 
 @Entity({ name: 'users' })
 export class User {
@@ -24,6 +31,14 @@ export class User {
   @Exclude()
   password: string;
 
+  @Column({
+    type: 'enum',
+    enum: UserRole,
+    default: UserRole.USER,
+  })
+  @Exclude()
+  role: string;
+
   @CreateDateColumn({ type: 'timestamp' })
   @Exclude()
   createdAt: Date;
@@ -31,4 +46,10 @@ export class User {
   @UpdateDateColumn({ type: 'timestamp' })
   @Exclude()
   updatedAt: Date;
+
+  @OneToMany(() => WorkspaceMember, (workspaceMember) => workspaceMember.user)
+  public workspaceMembers: WorkspaceMember[];
+
+  @OneToMany(() => Session, (session: Session) => session.user)
+  public sessions: Session[];
 }

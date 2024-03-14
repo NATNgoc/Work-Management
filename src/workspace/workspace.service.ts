@@ -1,11 +1,43 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { CreateWorkspaceDto } from './dto/create-workspace.dto';
 import { UpdateWorkspaceDto } from './dto/update-workspace.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Workspace } from './entities/workspace.entity';
+import { SystemparamsService } from 'src/systemparams/systemparams.service';
+import { ConfigKey } from 'src/common/constaints';
 
 @Injectable()
 export class WorkspaceService {
-  create(createWorkspaceDto: CreateWorkspaceDto) {
-    return 'This action adds a new workspace';
+  constructor(
+    @InjectRepository(Workspace)
+    private readonly workSpaceRepository: Repository<Workspace>,
+    private readonly systemParamService: SystemparamsService,
+  ) {}
+
+  async create(
+    createWorkspaceDto: CreateWorkspaceDto,
+  ): Promise<Workspace | null> {
+    const numberWorkspaceOfUser = await this.workSpaceRepository.countBy({
+      owner_id: createWorkspaceDto.owner_id,
+    });
+
+    if (
+      numberWorkspaceOfUser >=
+      (await this.systemParamService.getValueByKey(
+        ConfigKey.MAXIMUM_WORKSPACES_PER_USER,
+      ))
+    ) {
+      throw new ConflictException(
+        `user's userworkspace count - ${numberWorkspaceOfUser} is over the availible number (${ConfigKey.MAXIMUM_WORKSPACES_PER_USER}`,
+      );
+    }
+
+    const newWorkSpace = this.workSpaceRepository.create({
+      ...createWorkspaceDto,
+    });
+
+    return null;
   }
 
   findAll() {

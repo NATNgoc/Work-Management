@@ -8,7 +8,6 @@ import { LocalStrategy } from './stragegies/local.stragegy';
 import { PassportModule } from '@nestjs/passport';
 import { JwtAccessTokenStrategy } from './stragegies/jwt-access-token.stragegy';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { RefreshToken } from './entities/refresh-token.entity';
 import { KeyService } from './key.service';
 import { JwtRefreshTokenStrategy } from './stragegies/jwt-refresh-token.stragegy';
 import { User } from 'src/users/entities/users.entity';
@@ -16,24 +15,22 @@ import { Session } from './entities/session.entity';
 import { SessionService } from './session.service';
 
 @Module({
-  imports: 
-  [
-    UsersModule, 
+  imports: [
+    UsersModule,
     ConfigModule,
     JwtModule.register({}),
-    TypeOrmModule.forFeature([RefreshToken,User, Session]),
-    PassportModule
+    TypeOrmModule.forFeature([User, Session]),
+    PassportModule,
   ],
   controllers: [AuthenticationController],
-  providers: 
-  [
-    AuthenticationService, 
+  providers: [
+    AuthenticationService,
     LocalStrategy,
     JwtAccessTokenStrategy,
     JwtRefreshTokenStrategy,
     KeyService,
-    SessionService
+    SessionService,
   ],
-  exports: []
+  exports: [],
 })
-export class AuthenticationModule { }
+export class AuthenticationModule {}

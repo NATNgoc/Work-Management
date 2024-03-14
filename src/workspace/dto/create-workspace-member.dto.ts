@@ -1,7 +1,6 @@
-import { IsUUID, IsString, IsNotEmpty, IsOptional } from 'class-validator';
-import { ManyToOne, OneToMany } from 'typeorm';
+import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
 
-export class CreateWorkspaceDto {
+export class CreateWorkspaceMemberDto {
   @IsString()
   @IsNotEmpty()
   name: string;

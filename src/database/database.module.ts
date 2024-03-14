@@ -2,7 +2,8 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { entities } from 'src/entity';
-import { User } from 'src/users/entities/users.entity';
+import { DataSource } from 'typeorm';
+import { addTransactionalDataSource } from 'typeorm-transactional';
 
 @Module({
   imports: [
@@ -20,6 +21,13 @@ import { User } from 'src/users/entities/users.entity';
         synchronize: true,
         logging: true,
       }),
+      async dataSourceFactory(options) {
+        if (!options) {
+          throw new Error('Invalid options passed');
+        }
+
+        return addTransactionalDataSource(new DataSource(options));
+      },
     }),
   ],
   exports: [TypeOrmModule],

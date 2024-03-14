@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
 import * as dayjs from 'dayjs';
 import { ConfigKey } from 'src/common/constaints';
+import { Transactional } from 'typeorm-transactional';
 
 @Injectable()
 export class SessionService {
@@ -18,6 +19,7 @@ export class SessionService {
     ConfigKey.JWT_REFRESH_TOKEN_EXPIRATION_TIME,
   );
 
+  @Transactional()
   async createNewForUser(
     sessionId: string,
     userId: string,
@@ -27,7 +29,8 @@ export class SessionService {
       .toDate();
 
     const existingSessions = await this.sessionRepository.find({
-      where: { userId: userId },
+      select: { id: true },
+      where: { user: { id: userId } },
       order: { expiredAt: 'ASC' },
     });
 
@@ -38,7 +41,7 @@ export class SessionService {
     const result = this.sessionRepository.create({
       id: sessionId,
       expiredAt: expiredTime,
-      userId: userId,
+      user: { id: userId },
     });
 
     await this.sessionRepository.save(result);
