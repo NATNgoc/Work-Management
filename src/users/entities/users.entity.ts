@@ -1,8 +1,14 @@
-
 import { Exclude } from 'class-transformer';
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, Unique } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  Unique,
+} from 'typeorm';
 
-@Entity({name: 'users'})
+@Entity({ name: 'users' })
 export class User {
   @PrimaryGeneratedColumn('uuid')
   @Exclude()

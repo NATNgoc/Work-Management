@@ -1,21 +1,20 @@
-import { IsDate, IsNotEmpty, IsString } from "class-validator";
-import { CreateDateColumn, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
-
+import { IsDate, IsNotEmpty, IsString } from 'class-validator';
+import { CreateDateColumn, PrimaryColumn } from 'typeorm';
 
 export class CreateSessionDto {
-    @PrimaryColumn('uuid')
-    id: string
+  @PrimaryColumn('uuid')
+  id: string;
 
-    @IsNotEmpty()
-    @IsString()
-    user_id: string
+  @IsNotEmpty()
+  @IsString()
+  userId: string;
 
-    @IsDate()
-    expired_at: Date
+  @IsDate()
+  expiredAt: Date;
 
-    @IsDate()
-    @CreateDateColumn({ type: 'timestamp' })
-    create_at: Date
-  }
-  
-  export default CreateSessionDto;
+  @IsDate()
+  @CreateDateColumn({ type: 'timestamp' })
+  createAt: Date;
+}
+
+export default CreateSessionDto;

@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Session } from './entities/session.entity';
 import { Repository } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
-import dayjs from 'dayjs';
+import * as dayjs from 'dayjs';
 import { ConfigKey } from 'src/common/constaints';
 
 @Injectable()
@@ -35,17 +35,14 @@ export class SessionService {
       await this.sessionRepository.delete(existingSessions[0].id);
     }
 
-    const session = this.sessionRepository.create({
+    const result = this.sessionRepository.create({
       id: sessionId,
       expiredAt: expiredTime,
       userId: userId,
     });
 
-    if (session) {
-      throw new InternalServerErrorException();
-    }
-
-    return session;
+    await this.sessionRepository.save(result);
+    return result;
   }
 
   async findById(id: string): Promise<Session | null> {

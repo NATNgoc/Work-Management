@@ -7,6 +7,9 @@ import { DatabaseModule } from './database/database.module';
 import { AuthenticationModule } from './authentication/authentication.module';
 import * as Joi from '@hapi/joi';
 import { GlobalExceptionFilter } from './exceptionFilter/exception-filter';
+import { WorkspaceModule } from './workspace/workspace.module';
+import { TaskModule } from './task/task.module';
+import { NotificationModule } from './notification/notification.module';
 
 @Module({
   imports: [UsersModule, ConfigModule.forRoot({
@@ -19,7 +22,7 @@ import { GlobalExceptionFilter } from './exceptionFilter/exception-filter';
         PORT: Joi.number(),
     }),
     envFilePath: [`.env.${process.env.NODE_ENV}`,`.env`]
-  }), DatabaseModule, AuthenticationModule],
+  }), DatabaseModule, AuthenticationModule, WorkspaceModule, TaskModule, NotificationModule],
   controllers: [AppController],
   providers: [AppService,
     {
