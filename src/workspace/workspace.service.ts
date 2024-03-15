@@ -1,8 +1,13 @@
-import { ConflictException, Injectable, UseGuards } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  UnauthorizedException,
+  UseGuards,
+} from '@nestjs/common';
 import { CreateWorkspaceDto } from './dto/create-workspace.dto';
 import { UpdateWorkspaceDto } from './dto/update-workspace.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Transaction } from 'typeorm';
+import { Repository, Transaction, UpdateResult } from 'typeorm';
 import { Workspace } from './entities/workspace.entity';
 import { SystemparamsService } from 'src/systemparams/systemparams.service';
 import { ConfigKey } from 'src/common/constaints';
@@ -10,7 +15,7 @@ import { WorkspaceMemberService } from './workspace-member.service';
 import { WorkspaceMemberRole } from './entities/workspace-member.entity';
 import { Transactional } from 'typeorm-transactional';
 import { UsersService } from 'src/users/users.service';
-import { JwtAccessTokenGuard } from 'src/authentication/guards/jwt-access-token.guard';
+import { User } from 'src/users/entities/users.entity';
 
 @Injectable()
 export class WorkspaceService {
@@ -19,7 +24,6 @@ export class WorkspaceService {
     private readonly workSpaceRepository: Repository<Workspace>,
     private readonly systemParamService: SystemparamsService,
     private readonly workSpaceMemberService: WorkspaceMemberService,
-    private readonly userService: UsersService,
   ) {}
 
   @Transactional()
@@ -62,8 +66,29 @@ export class WorkspaceService {
     return `This action returns a #${id} workspace`;
   }
 
-  update(id: number, updateWorkspaceDto: UpdateWorkspaceDto) {
-    return `This action updates a #${id} workspace`;
+  async update(
+    id: string,
+    updateWorkspaceDto: UpdateWorkspaceDto,
+    user: User,
+  ): Promise<UpdateResult | null> {
+    const isOwner =
+      await this.workSpaceMemberService.checkWorkSpaceRoleByUserId(
+        id,
+        user.id,
+        WorkspaceMemberRole.OWNER,
+      );
+
+    if (!isOwner) {
+      throw new UnauthorizedException('User is not permitted doing that!');
+    }
+
+    const result = await this.workSpaceRepository.update(id, {
+      ...(updateWorkspaceDto.name && { name: updateWorkspaceDto.name }),
+      ...(updateWorkspaceDto.description && {
+        description: updateWorkspaceDto.description,
+      }),
+    });
+    return result;
   }
 
   remove(id: number) {

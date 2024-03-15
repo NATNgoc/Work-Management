@@ -16,23 +16,41 @@ export class WorkspaceMemberService {
 
   async create(
     createWorkspaceMemberData: CreateWorkspaceMemberDto,
-    role: WorkspaceMemberRole = WorkspaceMemberRole.MEMBER,
   ): Promise<WorkspaceMember | null> {
-    const isEmptyOwner = await this.workSpaceMemberRepository.countBy({
-      role: WorkspaceMemberRole.OWNER,
-      workspaceId: createWorkspaceMemberData.workspaceId,
+    const existedOwner = await this.workSpaceMemberRepository.count({
+      where: {
+        role: WorkspaceMemberRole.OWNER,
+        workspaceId: createWorkspaceMemberData.workspaceId,
+      },
     });
 
-    if (!isEmptyOwner && role == WorkspaceMemberRole.OWNER) {
+    if (
+      existedOwner > 0 &&
+      createWorkspaceMemberData.role == WorkspaceMemberRole.OWNER
+    ) {
       throw new ConflictException('Owner of this workspace already');
     }
 
     const result = await this.workSpaceMemberRepository.create({
       workspaceId: createWorkspaceMemberData.workspaceId,
       userId: createWorkspaceMemberData.userId,
-      role: role,
+      role: createWorkspaceMemberData.role,
     });
     return await this.workSpaceMemberRepository.save(result);
+  }
+
+  async checkWorkSpaceRoleByUserId(
+    workSpaceId: string,
+    userId: string,
+    role: WorkspaceMemberRole,
+  ): Promise<boolean> {
+    return (
+      (await this.workSpaceMemberRepository.countBy({
+        userId: userId,
+        role: role,
+        workspaceId: workSpaceId,
+      })) == 1
+    );
   }
 
   findAll() {

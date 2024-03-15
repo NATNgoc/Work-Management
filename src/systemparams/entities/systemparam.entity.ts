@@ -13,6 +13,7 @@ export class SystemParameter {
 
   @CreateDateColumn()
   updated_at: Date;
+
   @Column({ type: 'jsonb' })
   value: any;
 }

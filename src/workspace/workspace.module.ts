@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { WorkspaceService } from './workspace.service';
 import { WorkspaceController } from './workspace.controller';
 import { ConfigModule } from '@nestjs/config';
 import { SystemparamsService } from 'src/systemparams/systemparams.service';
@@ -9,6 +8,7 @@ import { WorkspaceMember } from './entities/workspace-member.entity';
 import { Workspace } from './entities/workspace.entity';
 import { WorkspaceMemberService } from './workspace-member.service';
 import { UsersModule } from 'src/users/users.module';
+import { WorkspaceService } from './workspace.service';
 
 @Module({
   imports: [

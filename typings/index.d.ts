@@ -1,7 +1,7 @@
-import { User as AppUser } from "src/users/entities/users.entity"
+import { User as AppUser } from 'src/users/entities/users.entity';
 
 declare global {
-    namespace Express {
-      interface User extends AppUser {}
-    }
+  namespace Express {
+    interface User extends AppUser {}
+  }
 }

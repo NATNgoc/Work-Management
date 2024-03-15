@@ -1,6 +1,6 @@
 import { DataSource } from 'typeorm';
 import { config } from 'dotenv';
-import { entities } from 'src/entity';
+import { User } from 'src/users/entities/users.entity';
 
 config();
 
@@ -11,5 +11,5 @@ export default new DataSource({
   username: process.env.POSTGRES_USER,
   password: process.env.POSTGRES_PASSWORD,
   database: process.env.POSTGRES_DB,
-  entities: entities,
+  entities: [User],
 });

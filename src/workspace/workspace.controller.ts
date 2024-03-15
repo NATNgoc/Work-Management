@@ -9,7 +9,6 @@ import {
   UseGuards,
   Req,
 } from '@nestjs/common';
-import { WorkspaceService } from './workspace.service';
 import { UpdateWorkspaceDto } from './dto/update-workspace.dto';
 import { SystemparamsService } from 'src/systemparams/systemparams.service';
 import { ConfigKey } from 'src/common/constaints';
@@ -17,6 +16,7 @@ import { JwtAccessTokenGuard } from 'src/authentication/guards/jwt-access-token.
 import { CreateWorkspaceDto } from './dto/create-workspace.dto';
 import { Workspace } from './entities/workspace.entity';
 import { Request } from 'express';
+import { WorkspaceService } from './workspace.service';
 
 @Controller('workspaces')
 export class WorkspaceController {
@@ -48,11 +48,13 @@ export class WorkspaceController {
   }
 
   @Patch(':id')
-  update(
+  @UseGuards(JwtAccessTokenGuard)
+  async update(
     @Param('id') id: string,
     @Body() updateWorkspaceDto: UpdateWorkspaceDto,
+    @Req() req: Request,
   ) {
-    return this.workspaceService.update(+id, updateWorkspaceDto);
+    return await this.workspaceService.update(id, updateWorkspaceDto, req.user);
   }
 
   @Delete(':id')
