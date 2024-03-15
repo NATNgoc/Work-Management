@@ -1,10 +1,12 @@
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
   PrimaryColumn,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { Workspace } from './workspace.entity';
 import { User } from 'src/users/entities/users.entity';
@@ -17,6 +19,12 @@ export enum WorkspaceMemberRole {
 
 @Entity({ name: 'workspace_members' })
 export class WorkspaceMember {
+  @PrimaryColumn('uuid', { name: 'workspace_id' })
+  workspaceId: string;
+
+  @PrimaryColumn('uuid', { name: 'user_id' })
+  userId: string;
+
   @ManyToOne(() => Workspace, (workspace) => workspace.members)
   public workspace: Workspace;
 
@@ -28,11 +36,11 @@ export class WorkspaceMember {
     enum: WorkspaceMemberRole,
     default: WorkspaceMemberRole.MEMBER,
   })
-  role: string;
+  role: WorkspaceMemberRole;
 
-  @Column({ type: 'date' })
+  @CreateDateColumn()
   created_at: Date;
 
-  @Column({ type: 'date' })
+  @UpdateDateColumn()
   updated_at: Date;
 }

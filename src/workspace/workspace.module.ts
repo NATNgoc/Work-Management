@@ -7,14 +7,17 @@ import { SystemparamsModule } from 'src/systemparams/systemparams.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { WorkspaceMember } from './entities/workspace-member.entity';
 import { Workspace } from './entities/workspace.entity';
+import { WorkspaceMemberService } from './workspace-member.service';
+import { UsersModule } from 'src/users/users.module';
 
 @Module({
   imports: [
     ConfigModule,
     SystemparamsModule,
     TypeOrmModule.forFeature([WorkspaceMember, Workspace]),
+    UsersModule,
   ],
   controllers: [WorkspaceController],
-  providers: [WorkspaceService],
+  providers: [WorkspaceService, WorkspaceMemberService],
 })
 export class WorkspaceModule {}

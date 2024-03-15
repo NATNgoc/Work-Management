@@ -1,4 +1,11 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { WorkspaceMember } from './workspace-member.entity';
 
 export enum WorkspaceType {
@@ -33,9 +40,9 @@ export class Workspace {
   )
   public members: WorkspaceMember[];
 
-  @Column({ type: 'date' })
+  @CreateDateColumn()
   created_at: Date;
 
-  @Column({ type: 'date' })
+  @UpdateDateColumn()
   updated_at: Date;
 }

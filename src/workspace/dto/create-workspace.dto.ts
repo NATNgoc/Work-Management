@@ -15,6 +15,5 @@ export class CreateWorkspaceDto {
   type: string;
 
   @IsUUID()
-  @IsNotEmpty()
   owner_id: string;
 }

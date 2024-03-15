@@ -1,7 +1,11 @@
-import { Injectable } from '@nestjs/common';
-import { WorkspaceMember } from './entities/workspace-member.entity';
+import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  WorkspaceMember,
+  WorkspaceMemberRole,
+} from './entities/workspace-member.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { CreateWorkspaceMemberDto } from './dto/create-workspace-member.dto';
 
 @Injectable()
 export class WorkspaceMemberService {
@@ -10,7 +14,26 @@ export class WorkspaceMemberService {
     private readonly workSpaceMemberRepository: Repository<WorkspaceMember>,
   ) {}
 
-  create() {}
+  async create(
+    createWorkspaceMemberData: CreateWorkspaceMemberDto,
+    role: WorkspaceMemberRole = WorkspaceMemberRole.MEMBER,
+  ): Promise<WorkspaceMember | null> {
+    const isEmptyOwner = await this.workSpaceMemberRepository.countBy({
+      role: WorkspaceMemberRole.OWNER,
+      workspaceId: createWorkspaceMemberData.workspaceId,
+    });
+
+    if (!isEmptyOwner && role == WorkspaceMemberRole.OWNER) {
+      throw new ConflictException('Owner of this workspace already');
+    }
+
+    const result = await this.workSpaceMemberRepository.create({
+      workspaceId: createWorkspaceMemberData.workspaceId,
+      userId: createWorkspaceMemberData.userId,
+      role: role,
+    });
+    return await this.workSpaceMemberRepository.save(result);
+  }
 
   findAll() {
     return `This action returns all workspace`;

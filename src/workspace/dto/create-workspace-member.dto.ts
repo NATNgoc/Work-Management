@@ -1,19 +1,13 @@
-import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
+import { IsEnum, IsUUID } from 'class-validator';
+import { WorkspaceMemberRole } from '../entities/workspace-member.entity';
 
 export class CreateWorkspaceMemberDto {
-  @IsString()
-  @IsNotEmpty()
-  name: string;
-
-  @IsString()
-  @IsOptional()
-  description: string;
-
-  @IsString()
-  @IsNotEmpty()
-  type: string;
+  @IsUUID()
+  workspaceId: string;
 
   @IsUUID()
-  @IsNotEmpty()
-  owner_id: string;
+  userId: string;
+
+  @IsEnum(WorkspaceMemberRole)
+  role: WorkspaceMemberRole;
 }

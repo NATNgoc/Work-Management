@@ -6,11 +6,17 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
 import { WorkspaceService } from './workspace.service';
 import { UpdateWorkspaceDto } from './dto/update-workspace.dto';
 import { SystemparamsService } from 'src/systemparams/systemparams.service';
 import { ConfigKey } from 'src/common/constaints';
+import { JwtAccessTokenGuard } from 'src/authentication/guards/jwt-access-token.guard';
+import { CreateWorkspaceDto } from './dto/create-workspace.dto';
+import { Workspace } from './entities/workspace.entity';
+import { Request } from 'express';
 
 @Controller('workspaces')
 export class WorkspaceController {
@@ -20,12 +26,15 @@ export class WorkspaceController {
   ) {}
 
   @Post()
-  async create() {
-    return {
-      result: await this.systemParamsService.getValueByKey(
-        ConfigKey.MAXIMUM_WORKSPACES_PER_USER,
-      ),
-    };
+  @UseGuards(JwtAccessTokenGuard)
+  async create(
+    @Req() req: Request,
+    @Body() createWorkSpaceData: CreateWorkspaceDto,
+  ): Promise<Workspace> {
+    return await this.workspaceService.create({
+      ...createWorkSpaceData,
+      owner_id: req.user.id,
+    });
   }
 
   @Get()
