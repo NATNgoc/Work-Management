@@ -39,7 +39,7 @@ export class WorkspaceMemberService {
     return await this.workSpaceMemberRepository.save(result);
   }
 
-  async checkWorkSpaceRoleByUserId(
+  async checkWithWorkSpaceRoleAndUserId(
     workSpaceId: string,
     userId: string,
     role: WorkspaceMemberRole,

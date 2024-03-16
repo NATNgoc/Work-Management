@@ -17,6 +17,7 @@ import { CreateWorkspaceDto } from './dto/create-workspace.dto';
 import { Workspace } from './entities/workspace.entity';
 import { Request } from 'express';
 import { WorkspaceService } from './workspace.service';
+import { CreateWorkspaceInvitationDto } from './dto/create-workspace-invitation.dto';
 
 @Controller('workspaces')
 export class WorkspaceController {
@@ -42,11 +43,6 @@ export class WorkspaceController {
     return this.workspaceService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.workspaceService.findOne(+id);
-  }
-
   @Patch(':id')
   @UseGuards(JwtAccessTokenGuard)
   async update(
@@ -61,4 +57,10 @@ export class WorkspaceController {
   remove(@Param('id') id: string) {
     return this.workspaceService.remove(+id);
   }
+
+  @Post(':id/invitations')
+  inviteNewUserToWorkSpace(
+    @Param('id') id: string,
+    @Body() createWorkspaceInvitationDto: CreateWorkspaceInvitationDto,
+  ) {}
 }

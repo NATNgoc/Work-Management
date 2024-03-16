@@ -9,15 +9,21 @@ import { Workspace } from './entities/workspace.entity';
 import { WorkspaceMemberService } from './workspace-member.service';
 import { UsersModule } from 'src/users/users.module';
 import { WorkspaceService } from './workspace.service';
+import { WorkspaceInvitationService } from './workspace-invitation.service';
+import { WorkspaceInvitation } from './entities/workspace-invitation.entity';
 
 @Module({
   imports: [
     ConfigModule,
     SystemparamsModule,
-    TypeOrmModule.forFeature([WorkspaceMember, Workspace]),
+    TypeOrmModule.forFeature([WorkspaceMember, Workspace, WorkspaceInvitation]),
     UsersModule,
   ],
   controllers: [WorkspaceController],
-  providers: [WorkspaceService, WorkspaceMemberService],
+  providers: [
+    WorkspaceService,
+    WorkspaceMemberService,
+    WorkspaceInvitationService,
+  ],
 })
 export class WorkspaceModule {}

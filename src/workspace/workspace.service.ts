@@ -14,7 +14,6 @@ import { ConfigKey } from 'src/common/constaints';
 import { WorkspaceMemberService } from './workspace-member.service';
 import { WorkspaceMemberRole } from './entities/workspace-member.entity';
 import { Transactional } from 'typeorm-transactional';
-import { UsersService } from 'src/users/users.service';
 import { User } from 'src/users/entities/users.entity';
 
 @Injectable()
@@ -62,8 +61,20 @@ export class WorkspaceService {
     return `This action returns all workspace`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} workspace`;
+  async findOne(id: string) {
+    return await this.workSpaceRepository.findBy({
+      id: id,
+    });
+  }
+
+  async checkWithId(workspaceId: string): Promise<boolean> {
+    const result = await this.workSpaceRepository.find({
+      select: { id: true },
+      where: {
+        id: workspaceId,
+      },
+    });
+    return !result ? false : true;
   }
 
   async update(
@@ -72,7 +83,7 @@ export class WorkspaceService {
     user: User,
   ): Promise<UpdateResult | null> {
     const isOwner =
-      await this.workSpaceMemberService.checkWorkSpaceRoleByUserId(
+      await this.workSpaceMemberService.checkWithWorkSpaceRoleAndUserId(
         id,
         user.id,
         WorkspaceMemberRole.OWNER,
