@@ -28,9 +28,10 @@ export class WorkspaceService {
   @Transactional()
   async create(
     createWorkSpaceData: CreateWorkspaceDto,
+    ownerId: string,
   ): Promise<Workspace | null> {
     const numberWorkspaceOfUser = await this.workSpaceRepository.countBy({
-      owner_id: createWorkSpaceData.owner_id,
+      owner_id: ownerId,
     });
 
     const maximumWorkSpace = await this.systemParamService.getValueByKey(
@@ -45,6 +46,7 @@ export class WorkspaceService {
 
     const newWorkSpace = this.workSpaceRepository.create({
       ...createWorkSpaceData,
+      owner_id: ownerId,
     });
 
     const result = await this.workSpaceRepository.save(newWorkSpace);
@@ -52,7 +54,7 @@ export class WorkspaceService {
     await this.workSpaceMemberService.create({
       workspaceId: result.id,
       role: WorkspaceMemberRole.OWNER,
-      userId: createWorkSpaceData.owner_id,
+      userId: ownerId,
     });
     return result;
   }
@@ -61,8 +63,8 @@ export class WorkspaceService {
     return `This action returns all workspace`;
   }
 
-  async findOne(id: string) {
-    return await this.workSpaceRepository.findBy({
+  async findOne(id: string): Promise<Workspace | null> {
+    return await this.workSpaceRepository.findOneBy({
       id: id,
     });
   }

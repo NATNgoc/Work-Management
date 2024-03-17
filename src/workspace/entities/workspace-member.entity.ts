@@ -26,9 +26,11 @@ export class WorkspaceMember {
   userId: string;
 
   @ManyToOne(() => Workspace, (workspace) => workspace.members)
+  @JoinColumn({ name: 'workspace_id' })
   public workspace: Workspace;
 
   @ManyToOne(() => User, (user) => user.workspaceMembers)
+  @JoinColumn({ name: 'user_id' })
   public user: User;
 
   @Column({

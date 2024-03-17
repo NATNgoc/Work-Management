@@ -7,13 +7,9 @@ export class CreateWorkspaceDto {
   name: string;
 
   @IsString()
-  @IsOptional()
   description: string;
 
   @IsString()
   @IsNotEmpty()
   type: string;
-
-  @IsUUID()
-  owner_id: string;
 }

@@ -18,12 +18,14 @@ import { Workspace } from './entities/workspace.entity';
 import { Request } from 'express';
 import { WorkspaceService } from './workspace.service';
 import { CreateWorkspaceInvitationDto } from './dto/create-workspace-invitation.dto';
+import { WorkspaceInvitationService } from './workspace-invitation.service';
 
 @Controller('workspaces')
 export class WorkspaceController {
   constructor(
     private readonly workspaceService: WorkspaceService,
     private readonly systemParamsService: SystemparamsService,
+    private readonly workspaceInvitationService: WorkspaceInvitationService,
   ) {}
 
   @Post()
@@ -32,10 +34,12 @@ export class WorkspaceController {
     @Req() req: Request,
     @Body() createWorkSpaceData: CreateWorkspaceDto,
   ): Promise<Workspace> {
-    return await this.workspaceService.create({
-      ...createWorkSpaceData,
-      owner_id: req.user.id,
-    });
+    return await this.workspaceService.create(
+      {
+        ...createWorkSpaceData,
+      },
+      req.user.id,
+    );
   }
 
   @Get()
@@ -59,8 +63,16 @@ export class WorkspaceController {
   }
 
   @Post(':id/invitations')
-  inviteNewUserToWorkSpace(
+  @UseGuards(JwtAccessTokenGuard)
+  async inviteUserToSpace(
     @Param('id') id: string,
-    @Body() createWorkspaceInvitationDto: CreateWorkspaceInvitationDto,
-  ) {}
+    @Req() req: Request,
+    @Body() createWorkspaceInvitationData: CreateWorkspaceInvitationDto,
+  ) {
+    return await this.workspaceInvitationService.create(
+      id,
+      req.user.id,
+      createWorkspaceInvitationData.invitedUserId,
+    );
+  }
 }
