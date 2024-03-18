@@ -1,5 +1,5 @@
 import { IsEnum, IsUUID } from 'class-validator';
-import { WorkspaceMemberRole } from '../entities/workspace-member.entity';
+import { WorkspaceMemberRole } from '../../workspace-member/entities/workspace-member.entity';
 
 export class CreateWorkspaceMemberDto {
   @IsUUID()

@@ -11,8 +11,8 @@ import { Repository, Transaction, UpdateResult } from 'typeorm';
 import { Workspace } from './entities/workspace.entity';
 import { SystemparamsService } from 'src/systemparams/systemparams.service';
 import { ConfigKey } from 'src/common/constaints';
-import { WorkspaceMemberService } from './workspace-member.service';
-import { WorkspaceMemberRole } from './entities/workspace-member.entity';
+import { WorkspaceMemberService } from '../workspace-member/workspace-member.service';
+import { WorkspaceMemberRole } from '../workspace-member/entities/workspace-member.entity';
 import { Transactional } from 'typeorm-transactional';
 import { User } from 'src/users/entities/users.entity';
 

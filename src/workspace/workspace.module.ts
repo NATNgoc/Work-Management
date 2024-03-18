@@ -4,26 +4,26 @@ import { ConfigModule } from '@nestjs/config';
 import { SystemparamsService } from 'src/systemparams/systemparams.service';
 import { SystemparamsModule } from 'src/systemparams/systemparams.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { WorkspaceMember } from './entities/workspace-member.entity';
+import { WorkspaceMember } from '../workspace-member/entities/workspace-member.entity';
 import { Workspace } from './entities/workspace.entity';
-import { WorkspaceMemberService } from './workspace-member.service';
+import { WorkspaceMemberService } from '../workspace-member/workspace-member.service';
 import { UsersModule } from 'src/users/users.module';
 import { WorkspaceService } from './workspace.service';
-import { WorkspaceInvitationService } from './workspace-invitation.service';
-import { WorkspaceInvitation } from './entities/workspace-invitation.entity';
+import { WorkspaceInvitationService } from '../workspace-invitation/workspace-invitation.service';
+import { WorkspaceInvitation } from '../workspace-invitation/enitities/workspace-invitation.entity';
+import { WorkspaceInvitationModule } from 'src/workspace-invitation/workspace-invitation.module';
+import { WorkspaceMemberModule } from 'src/workspace-member/workspace-member.module';
 
 @Module({
   imports: [
     ConfigModule,
     SystemparamsModule,
-    TypeOrmModule.forFeature([WorkspaceMember, Workspace, WorkspaceInvitation]),
+    TypeOrmModule.forFeature([WorkspaceMember, Workspace]),
     UsersModule,
+    WorkspaceMemberModule,
   ],
   controllers: [WorkspaceController],
-  providers: [
-    WorkspaceService,
-    WorkspaceMemberService,
-    WorkspaceInvitationService,
-  ],
+  providers: [WorkspaceService],
+  exports: [WorkspaceService],
 })
 export class WorkspaceModule {}

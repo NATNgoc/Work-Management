@@ -11,6 +11,8 @@ import { WorkspaceModule } from './workspace/workspace.module';
 import { TaskModule } from './task/task.module';
 import { NotificationModule } from './notification/notification.module';
 import { SystemparamsModule } from './systemparams/systemparams.module';
+import { WorkspaceInvitationModule } from './workspace-invitation/workspace-invitation.module';
+import { WorkspaceMemberModule } from './workspace-member/workspace-member.module';
 
 @Module({
   imports: [
@@ -32,6 +34,8 @@ import { SystemparamsModule } from './systemparams/systemparams.module';
     TaskModule,
     NotificationModule,
     SystemparamsModule,
+    WorkspaceInvitationModule,
+    WorkspaceMemberModule,
   ],
   controllers: [AppController],
   providers: [

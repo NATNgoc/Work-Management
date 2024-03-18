@@ -5,7 +5,7 @@ import {
 } from './entities/workspace-member.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateWorkspaceMemberDto } from './dto/create-workspace-member.dto';
+import { CreateWorkspaceMemberDto } from '../workspace/dto/create-workspace-member.dto';
 
 @Injectable()
 export class WorkspaceMemberService {

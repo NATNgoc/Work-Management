@@ -8,7 +8,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Workspace } from './workspace.entity';
+import { Workspace } from '../../workspace/entities/workspace.entity';
 import { User } from 'src/users/entities/users.entity';
 
 export enum WorkspaceMemberRole {

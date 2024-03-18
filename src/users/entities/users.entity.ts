@@ -1,6 +1,6 @@
 import { Exclude } from 'class-transformer';
 import { Session } from 'src/authentication/entities/session.entity';
-import { WorkspaceMember } from 'src/workspace/entities/workspace-member.entity';
+import { WorkspaceMember } from 'src/workspace-member/entities/workspace-member.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,

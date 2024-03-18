@@ -2,7 +2,7 @@ import { DeleteResult, Repository } from 'typeorm';
 import {
   WorkspaceInvitation,
   WorkspaceInvitationStatus,
-} from './entities/workspace-invitation.entity';
+} from './enitities/workspace-invitation.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   ConflictException,
@@ -10,9 +10,9 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { WorkspaceService } from './workspace.service';
+import { WorkspaceService } from '../workspace/workspace.service';
 import { UsersService } from 'src/users/users.service';
-import { WorkspaceType } from './entities/workspace.entity';
+import { WorkspaceType } from '../workspace/entities/workspace.entity';
 
 @Injectable()
 export class WorkspaceInvitationService {
@@ -22,6 +22,36 @@ export class WorkspaceInvitationService {
     private readonly workSpaceService: WorkspaceService,
     private readonly userServivce: UsersService,
   ) {}
+
+  async updateStatus(
+    workspaceId: string,
+    invitingUserId: string,
+    invitedUserId: string,
+    status: WorkspaceInvitationStatus,
+  ) {
+    const invitation = await this.workSpaceInvitationRepository.findOneBy({
+      invitedUserId: invitedUserId,
+      invitingUserId: invitingUserId,
+      workspaceId: workspaceId,
+    });
+    await this.checkInputBeforeUpdate(invitation, status);
+
+    invitation.status = status;
+    return await this.workSpaceInvitationRepository.save(invitation);
+  }
+
+  private async checkInputBeforeUpdate(
+    invitation: WorkspaceInvitation,
+    status: WorkspaceInvitationStatus,
+  ) {
+    if (!invitation) {
+      throw new NotFoundException("You haven't been invited before!");
+    }
+
+    if (invitation.status != WorkspaceInvitationStatus.PENDING) {
+      throw new NotFoundException('Invitation is already accepted or rejected');
+    }
+  }
 
   async create(
     workspaceId: string,

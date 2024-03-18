@@ -17,16 +17,12 @@ import { CreateWorkspaceDto } from './dto/create-workspace.dto';
 import { Workspace } from './entities/workspace.entity';
 import { Request } from 'express';
 import { WorkspaceService } from './workspace.service';
-import { CreateAndDeleteWorkspaceInvitationDto } from './dto/create-workspace-invitation.dto';
-import { WorkspaceInvitationService } from './workspace-invitation.service';
+import { CreateAndDeleteWorkspaceInvitationDto } from '../workspace-invitation/dto/create-workspace-invitation.dto';
+import { WorkspaceInvitationService } from '../workspace-invitation/workspace-invitation.service';
 
 @Controller('workspaces')
 export class WorkspaceController {
-  constructor(
-    private readonly workspaceService: WorkspaceService,
-    private readonly systemParamsService: SystemparamsService,
-    private readonly workspaceInvitationService: WorkspaceInvitationService,
-  ) {}
+  constructor(private readonly workspaceService: WorkspaceService) {}
 
   @Post()
   @UseGuards(JwtAccessTokenGuard)
@@ -74,35 +70,5 @@ export class WorkspaceController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.workspaceService.remove(+id);
-  }
-
-  @Post(':id/invitations')
-  @UseGuards(JwtAccessTokenGuard)
-  async inviteUserToSpace(
-    @Param('id') id: string,
-    @Req() req: Request,
-    @Body()
-    createWorkspaceInvitationData: CreateAndDeleteWorkspaceInvitationDto,
-  ) {
-    return await this.workspaceInvitationService.create(
-      id,
-      req.user.id,
-      createWorkspaceInvitationData.invitedUserId,
-    );
-  }
-
-  @Delete(':id/invitations')
-  @UseGuards(JwtAccessTokenGuard)
-  async removeInvitation(
-    @Param('id') id: string,
-    @Req() req: Request,
-    @Body()
-    createWorkspaceInvitationData: CreateAndDeleteWorkspaceInvitationDto,
-  ) {
-    return await this.workspaceInvitationService.delete(
-      id,
-      req.user.id,
-      createWorkspaceInvitationData.invitedUserId,
-    );
   }
 }

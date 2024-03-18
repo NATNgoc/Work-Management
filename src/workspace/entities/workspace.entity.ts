@@ -6,7 +6,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { WorkspaceMember } from './workspace-member.entity';
+import { WorkspaceMember } from '../../workspace-member/entities/workspace-member.entity';
 
 export enum WorkspaceType {
   PERSONAL = 'personal',
