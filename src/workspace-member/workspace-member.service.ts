@@ -6,10 +6,9 @@ import {
   UnauthorizedException,
   forwardRef,
 } from '@nestjs/common';
-import {
-  WorkspaceMember,
-  WorkspaceMemberRole,
-} from './entities/workspace-member.entity';
+import { WorkspaceMember } from './entities/workspace-member.entity';
+
+import WorkspaceMemberRole from '../enum/workspace-member-role.enum';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Transaction } from 'typeorm';
 import { CreateWorkspaceMemberDto } from '../workspace/dto/create-workspace-member.dto';
@@ -113,8 +112,14 @@ export class WorkspaceMemberService {
     return `This action returns all workspace`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} workspace`;
+  async findOne(
+    workSpaceId: string,
+    userId: string,
+  ): Promise<WorkspaceMember | null> {
+    return await this.workSpaceMemberRepository.findOneBy({
+      userId: userId,
+      workspaceId: workSpaceId,
+    });
   }
 
   update() {}

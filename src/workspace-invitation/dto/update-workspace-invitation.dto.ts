@@ -1,5 +1,5 @@
 import { IsEnum, IsNotEmpty, IsUUID } from 'class-validator';
-import { WorkspaceInvitationStatus } from '../enitities/workspace-invitation.entity';
+import { WorkspaceInvitationStatus } from '../../enum/workspace-invitation-status.enum';
 
 export class UpdateWorkspaceInvitationDto {
   @IsUUID()

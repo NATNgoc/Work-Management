@@ -7,11 +7,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { WorkspaceMember } from '../../workspace-member/entities/workspace-member.entity';
-
-export enum WorkspaceType {
-  PERSONAL = 'personal',
-  TEAMWORK = 'teamwork',
-}
+import WorkspaceType from 'src/enum/workspace-type.enum';
+import { Task } from 'src/task/entities/task.entity';
 
 @Entity({ name: 'workspaces' })
 export class Workspace {
@@ -39,6 +36,9 @@ export class Workspace {
     (workspaceMember) => workspaceMember.workspace,
   )
   public members: WorkspaceMember[];
+
+  @OneToMany(() => Task, (task) => task.workspace)
+  public task: Task;
 
   @CreateDateColumn()
   created_at: Date;

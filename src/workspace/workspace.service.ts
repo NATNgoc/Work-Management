@@ -14,7 +14,7 @@ import { Workspace } from './entities/workspace.entity';
 import { SystemparamsService } from 'src/systemparams/systemparams.service';
 import { ConfigKey } from 'src/common/constaints';
 import { WorkspaceMemberService } from '../workspace-member/workspace-member.service';
-import { WorkspaceMemberRole } from '../workspace-member/entities/workspace-member.entity';
+import { WorkspaceMemberRole } from '../enum/workspace-member-role.enum';
 import { Transactional } from 'typeorm-transactional';
 import { User } from 'src/users/entities/users.entity';
 

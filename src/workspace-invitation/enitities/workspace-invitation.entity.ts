@@ -9,12 +9,7 @@ import {
 } from 'typeorm';
 import { Workspace } from '../../workspace/entities/workspace.entity';
 import { User } from 'src/users/entities/users.entity';
-
-export enum WorkspaceInvitationStatus {
-  ACCEPTED = 'accepted',
-  PENDING = 'pending',
-  REJECTED = 'rejected',
-}
+import WorkspaceInvitationStatus from 'src/enum/workspace-invitation-status.enum';
 
 @Entity({ name: 'workspace_invitations' })
 export class WorkspaceInvitation {

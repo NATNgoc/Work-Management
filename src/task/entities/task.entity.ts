@@ -1,1 +1,53 @@
-export class Task {}
+import TaskStatus from 'src/enum/task-status.enum';
+import { User } from 'src/users/entities/users.entity';
+import { Workspace } from 'src/workspace/entities/workspace.entity';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+  UpdateDateColumn,
+  CreateDateColumn,
+} from 'typeorm';
+
+@Entity()
+export class Task {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
+  @Column('uuid', { name: 'workspace_id' })
+  workspaceId: string;
+
+  @ManyToOne(() => Workspace, (workspace) => workspace.id)
+  @JoinColumn({ name: 'workspace_id' })
+  workspace: Workspace;
+
+  @Column('uuid', { name: 'created_by' })
+  createdBy: string;
+
+  @ManyToOne(() => User, (user) => user.id)
+  @JoinColumn({ name: 'created_by' })
+  createdUser: User;
+
+  @Column({ length: 255 })
+  title: string;
+
+  @Column({ type: 'text', nullable: true })
+  description: string;
+
+  @Column({ default: false })
+  isDone: boolean;
+
+  @Column({ type: 'enum', enum: TaskStatus, default: TaskStatus.PENDING })
+  status: TaskStatus;
+
+  @Column({ type: 'date' })
+  dueDate: Date;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
+}

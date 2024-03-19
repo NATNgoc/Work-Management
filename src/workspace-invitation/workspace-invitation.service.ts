@@ -1,8 +1,6 @@
 import { DeleteResult, Repository } from 'typeorm';
-import {
-  WorkspaceInvitation,
-  WorkspaceInvitationStatus,
-} from './enitities/workspace-invitation.entity';
+import { WorkspaceInvitation } from './enitities/workspace-invitation.entity';
+import WorkspaceInvitationStatus from 'src/enum/workspace-invitation-status.enum';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   ConflictException,
@@ -12,9 +10,9 @@ import {
 } from '@nestjs/common';
 import { WorkspaceService } from '../workspace/workspace.service';
 import { UsersService } from 'src/users/users.service';
-import { WorkspaceType } from '../workspace/entities/workspace.entity';
+import { WorkspaceType } from 'src/enum/workspace-type.enum';
 import { WorkspaceMemberService } from 'src/workspace-member/workspace-member.service';
-import { WorkspaceMemberRole } from 'src/workspace-member/entities/workspace-member.entity';
+import { WorkspaceMemberRole } from '../enum/workspace-member-role.enum';
 import { Transactional } from 'typeorm-transactional';
 
 @Injectable()
