@@ -27,22 +27,6 @@ export class TaskAssignmentService {
     - task phải tồn tại
   */
   async create(taskId: string, requestUserId: string, assignedUserId: string) {
-    await this.checkBeforeCreate(taskId, requestUserId, assignedUserId);
-
-    const result = await this.taskAssignmentRepo.create({
-      taskId: taskId,
-      userIdAssignedBy: requestUserId,
-      userIdAssignedTo: assignedUserId,
-    });
-
-    return await this.taskAssignmentRepo.save(result);
-  }
-
-  private async checkBeforeCreate(
-    taskId: string,
-    requestUserId: string,
-    assignedUserId: string,
-  ) {
     const currentTask = await this.taskService.findOne(taskId);
     if (
       !currentTask ||
@@ -70,6 +54,13 @@ export class TaskAssignmentService {
     ) {
       throw new UnauthorizedException("User can't assign");
     }
+    const result = await this.taskAssignmentRepo.create({
+      taskId: taskId,
+      userIdAssignedBy: requestUserId,
+      userIdAssignedTo: assignedUserId,
+    });
+
+    return await this.taskAssignmentRepo.save(result);
   }
 
   findAll() {

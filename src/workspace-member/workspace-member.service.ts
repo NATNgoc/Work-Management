@@ -32,13 +32,28 @@ export class WorkspaceMemberService {
     requestUserId: string,
     role: WorkspaceMemberRole,
   ): Promise<WorkspaceMember> {
-    await this.checkInputBeforeUpdateRole(workSpaceId, requestUserId, role);
     const workspaceMember = await this.workSpaceMemberRepository.findOne({
       where: { workspaceId: workSpaceId, userId: updatingUserId },
     });
 
     if (!workspaceMember) {
       throw new NotFoundException('Workspace member not found');
+    }
+
+    const curWorkSpace = await this.workSpaceService.findOne(workSpaceId);
+    if (!curWorkSpace) {
+      throw new NotFoundException('Workspace is not exists');
+    }
+
+    const isOwner = curWorkSpace.owner_id === requestUserId;
+    if (!isOwner) {
+      throw new UnauthorizedException(
+        "You aren't the owner of this workspace!",
+      );
+    }
+
+    if (role == WorkspaceMemberRole.OWNER) {
+      throw new ConflictException('Owner has only one');
     }
 
     workspaceMember.role = role;
@@ -63,28 +78,6 @@ export class WorkspaceMemberService {
   // ): Promise<WorkspaceMember[] | null> {
   //   // return await this.workSpaceMemberRepository.delete()
   // }
-
-  private async checkInputBeforeUpdateRole(
-    workSpaceId: string,
-    requestUserId: string,
-    role: WorkspaceMemberRole,
-  ): Promise<void> {
-    const curWorkSpace = await this.workSpaceService.findOne(workSpaceId);
-    if (!curWorkSpace) {
-      throw new NotFoundException('Workspace is not exists');
-    }
-
-    const isOwner = curWorkSpace.owner_id === requestUserId;
-    if (!isOwner) {
-      throw new UnauthorizedException(
-        "You aren't the owner of this workspace!",
-      );
-    }
-
-    if (role == WorkspaceMemberRole.OWNER) {
-      throw new ConflictException('Owner has only one');
-    }
-  }
 
   async create(
     createWorkspaceMemberData: CreateWorkspaceMemberDto,
