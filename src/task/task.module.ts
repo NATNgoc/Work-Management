@@ -11,5 +11,6 @@ import { WorkspaceMemberModule } from 'src/workspace-member/workspace-member.mod
   imports: [TypeOrmModule.forFeature([Task]), WorkspaceMemberModule],
   controllers: [TaskController],
   providers: [TaskService],
+  exports: [TaskService],
 })
 export class TaskModule {}

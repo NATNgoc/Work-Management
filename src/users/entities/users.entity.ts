@@ -1,5 +1,6 @@
 import { Exclude } from 'class-transformer';
 import { Session } from 'src/authentication/entities/session.entity';
+import { TaskAssignment } from 'src/task-assignment/entities/task-assignment.entity';
 import { Task } from 'src/task/entities/task.entity';
 import { WorkspaceMember } from 'src/workspace-member/entities/workspace-member.entity';
 import {
@@ -56,4 +57,16 @@ export class User {
 
   @OneToMany(() => Task, (task: Task) => task.createdUser)
   public task: Task[];
+
+  @OneToMany(
+    () => TaskAssignment,
+    (taskAssignment) => taskAssignment.userAssignedTo,
+  )
+  public assignedTasks: TaskAssignment[];
+
+  @OneToMany(
+    () => TaskAssignment,
+    (taskAssignment) => taskAssignment.userAssignedBy,
+  )
+  public assignedTasksByUser: TaskAssignment[];
 }

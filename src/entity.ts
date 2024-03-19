@@ -1,5 +1,6 @@
 import { Session } from './authentication/entities/session.entity';
 import { SystemParameter } from './systemparams/entities/systemparam.entity';
+import { TaskAssignment } from './task-assignment/entities/task-assignment.entity';
 import { Task } from './task/entities/task.entity';
 import { User } from './users/entities/users.entity';
 import { WorkspaceInvitation } from './workspace-invitation/enitities/workspace-invitation.entity';
@@ -14,4 +15,5 @@ export const entities = [
   SystemParameter,
   WorkspaceInvitation,
   Task,
+  TaskAssignment,
 ];

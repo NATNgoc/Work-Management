@@ -10,7 +10,7 @@ import { WorkspaceMember } from './entities/workspace-member.entity';
 
 import WorkspaceMemberRole from '../enum/workspace-member-role.enum';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Transaction } from 'typeorm';
+import { In, Repository, Transaction } from 'typeorm';
 import { CreateWorkspaceMemberDto } from '../workspace/dto/create-workspace-member.dto';
 import { Transactional } from 'typeorm-transactional';
 import { WorkspaceService } from 'src/workspace/workspace.service';
@@ -46,6 +46,23 @@ export class WorkspaceMemberService {
 
     return workspaceMember;
   }
+
+  async findManyByIds(
+    userIds: string[],
+    workSpaceId,
+  ): Promise<WorkspaceMember[] | null> {
+    return await this.workSpaceMemberRepository.findBy({
+      userId: In(userIds),
+      workspaceId: workSpaceId,
+    });
+  }
+
+  // async delete(
+  //   userIds: string,
+  //   workSpaceId,
+  // ): Promise<WorkspaceMember[] | null> {
+  //   // return await this.workSpaceMemberRepository.delete()
+  // }
 
   private async checkInputBeforeUpdateRole(
     workSpaceId: string,

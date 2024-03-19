@@ -11,22 +11,22 @@ import {
 } from '@nestjs/common';
 import { TaskService } from './task.service';
 import { CreateTaskDto } from './dto/create-task.dto';
-import { UpdateTaskDto } from './dto/update-task.dto';
 import { JwtAccessTokenGuard } from 'src/authentication/guards/jwt-access-token.guard';
 import { Request } from 'express';
 import { Task } from './entities/task.entity';
-@Controller('workspaces/:id/tasks')
+import UpdateGeneralTaskInfoDto from './dto/update-general-info-task.dto';
+
+@Controller('tasks')
 export class TaskController {
   constructor(private readonly taskService: TaskService) {}
 
   @Post('')
   @UseGuards(JwtAccessTokenGuard)
   async create(
-    @Param('id') id: string,
     @Body() createTaskDto: CreateTaskDto,
     @Req() req: Request,
   ): Promise<Task> {
-    return await this.taskService.create(req.user.id, id, createTaskDto);
+    return await this.taskService.create(req.user.id, createTaskDto);
   }
 
   @Get()
@@ -35,13 +35,16 @@ export class TaskController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.taskService.findOne(+id);
-  }
+  findOne(@Param('id') id: string) {}
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTaskDto: UpdateTaskDto) {
-    return this.taskService.update(+id, updateTaskDto);
+  @UseGuards(JwtAccessTokenGuard)
+  async updateGeneralInfo(
+    @Param('id') id: string,
+    @Body() updateTaskDto: UpdateGeneralTaskInfoDto,
+    @Req() req: Request,
+  ) {
+    return this.taskService.updateGeneralInfo(req.user.id, id, updateTaskDto);
   }
 
   @Delete(':id')

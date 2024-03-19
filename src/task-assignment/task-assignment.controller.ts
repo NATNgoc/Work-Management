@@ -1,15 +1,35 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Req,
+} from '@nestjs/common';
 import { TaskAssignmentService } from './task-assignment.service';
 import { CreateTaskAssignmentDto } from './dto/create-task-assignment.dto';
 import { UpdateTaskAssignmentDto } from './dto/update-task-assignment.dto';
-
-@Controller('task-assignment')
+import { JwtAccessTokenGuard } from 'src/authentication/guards/jwt-access-token.guard';
+import { Request } from 'express';
+@Controller('tasks/:id/assignments')
 export class TaskAssignmentController {
   constructor(private readonly taskAssignmentService: TaskAssignmentService) {}
 
   @Post()
-  create(@Body() createTaskAssignmentDto: CreateTaskAssignmentDto) {
-    return this.taskAssignmentService.create(createTaskAssignmentDto);
+  @UseGuards(JwtAccessTokenGuard)
+  async create(
+    @Body() createTaskAssignmentDto: CreateTaskAssignmentDto,
+    @Param('id') id: string,
+    @Req() req: Request,
+  ) {
+    return await this.taskAssignmentService.create(
+      id,
+      req.user.id,
+      createTaskAssignmentDto.userId_assigned_to,
+    );
   }
 
   @Get()
@@ -23,7 +43,10 @@ export class TaskAssignmentController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTaskAssignmentDto: UpdateTaskAssignmentDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateTaskAssignmentDto: UpdateTaskAssignmentDto,
+  ) {
     return this.taskAssignmentService.update(+id, updateTaskAssignmentDto);
   }
 

@@ -1,6 +1,9 @@
+import { Exclude } from 'class-transformer';
 import TaskStatus from 'src/enum/task-status.enum';
+import { TaskAssignment } from 'src/task-assignment/entities/task-assignment.entity';
 import { User } from 'src/users/entities/users.entity';
 import { Workspace } from 'src/workspace/entities/workspace.entity';
+
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -9,6 +12,7 @@ import {
   JoinColumn,
   UpdateDateColumn,
   CreateDateColumn,
+  OneToMany,
 } from 'typeorm';
 
 @Entity()
@@ -45,9 +49,14 @@ export class Task {
   @Column({ type: 'date' })
   dueDate: Date;
 
+  @Exclude()
   @CreateDateColumn()
   createdAt: Date;
 
+  @Exclude()
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @OneToMany(() => TaskAssignment, (taskAssignment) => taskAssignment.task)
+  public assignedTasks: TaskAssignment[];
 }
