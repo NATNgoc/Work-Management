@@ -6,19 +6,7 @@ import { IS_PUBLIC_KEY } from '../../decorators/auth-bypass-public.decorator';
 
 @Injectable()
 export class JwtAccessTokenGuard extends AuthGuard('jwt') {
-	constructor(private reflector: Reflector) {
-		super();
-	}
-	canActivate(
-		context: ExecutionContext,
-	): boolean | Promise<boolean> | Observable<boolean> {
-		const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
-			context.getHandler(),
-			context.getClass(),
-		]);
-		if (isPublic) {
-			return true;
-		}
-		return super.canActivate(context);
-	}
+  constructor(private reflector: Reflector) {
+    super();
+  }
 }

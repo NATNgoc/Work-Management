@@ -1,37 +1,54 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UsePipes, ValidationPipe, UseGuards } from '@nestjs/common';
-import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { JwtAccessTokenGuard } from 'src/authentication/guards/jwt-access-token.guard';
-
+import { UsersService } from './users.service';
+import { UpdateUserGeneralDto } from './dto/update-user.dto';
+import { EnsureUserOwnership } from 'src/decorators/ensurance-user-ownership.decorator';
+import { changePasswordDto } from './dto/change-passwork-user.dto';
+import { Request } from 'express';
+import { User } from './entities/users.entity';
 @Controller('users')
-@UsePipes(new ValidationPipe())
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly userService: UsersService) {}
 
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    
-  }
-
+  @Get('')
   @UseGuards(JwtAccessTokenGuard)
-  @Get()
-  findAll() {
-    return 'all'
+  async findAll() {
+    return 'get all';
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    
+  @Patch(':id/password')
+  @UseGuards(JwtAccessTokenGuard)
+  async changePassword(
+    @Param()
+    @EnsureUserOwnership()
+    id: string,
+    @Body() changePasswordData: changePasswordDto,
+    @Req() req: Request,
+  ) {
+    const curUser: User = req.user;
+    return await this.userService.changePassword(
+      curUser,
+      changePasswordData.oldPassword,
+      changePasswordData.newPassword,
+    );
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-   
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    
+  @UseGuards(JwtAccessTokenGuard)
+  async updateGeneralInformation(
+    @Param()
+    @EnsureUserOwnership()
+    id: string,
+    @Body() updateData: UpdateUserGeneralDto,
+  ) {
+    return this.userService.updateGeneralInformation(id, updateData);
   }
 }

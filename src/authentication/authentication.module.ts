@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { AuthenticationService } from './authentication.service';
 import { AuthenticationController } from './authentication.controller';
 import { UsersModule } from 'src/users/users.module';
@@ -16,7 +16,7 @@ import { SessionService } from './session.service';
 
 @Module({
   imports: [
-    UsersModule,
+    forwardRef(() => UsersModule),
     ConfigModule,
     JwtModule.register({}),
     TypeOrmModule.forFeature([User, Session]),
@@ -31,6 +31,6 @@ import { SessionService } from './session.service';
     KeyService,
     SessionService,
   ],
-  exports: [],
+  exports: [AuthenticationService],
 })
 export class AuthenticationModule {}

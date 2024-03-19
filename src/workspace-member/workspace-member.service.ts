@@ -4,8 +4,9 @@ import {
   WorkspaceMemberRole,
 } from './entities/workspace-member.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, Transaction } from 'typeorm';
 import { CreateWorkspaceMemberDto } from '../workspace/dto/create-workspace-member.dto';
+import { Transactional } from 'typeorm-transactional';
 
 @Injectable()
 export class WorkspaceMemberService {
@@ -31,7 +32,7 @@ export class WorkspaceMemberService {
       throw new ConflictException('Owner of this workspace already');
     }
 
-    const result = await this.workSpaceMemberRepository.create({
+    const result = this.workSpaceMemberRepository.create({
       workspaceId: createWorkspaceMemberData.workspaceId,
       userId: createWorkspaceMemberData.userId,
       role: createWorkspaceMemberData.role,

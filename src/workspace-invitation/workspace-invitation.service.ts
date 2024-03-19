@@ -13,6 +13,9 @@ import {
 import { WorkspaceService } from '../workspace/workspace.service';
 import { UsersService } from 'src/users/users.service';
 import { WorkspaceType } from '../workspace/entities/workspace.entity';
+import { WorkspaceMemberService } from 'src/workspace-member/workspace-member.service';
+import { WorkspaceMemberRole } from 'src/workspace-member/entities/workspace-member.entity';
+import { Transactional } from 'typeorm-transactional';
 
 @Injectable()
 export class WorkspaceInvitationService {
@@ -21,8 +24,10 @@ export class WorkspaceInvitationService {
     private readonly workSpaceInvitationRepository: Repository<WorkspaceInvitation>,
     private readonly workSpaceService: WorkspaceService,
     private readonly userServivce: UsersService,
+    private readonly workSpaceMemberService: WorkspaceMemberService,
   ) {}
 
+  @Transactional()
   async updateStatus(
     workspaceId: string,
     invitingUserId: string,
@@ -35,6 +40,14 @@ export class WorkspaceInvitationService {
       workspaceId: workspaceId,
     });
     await this.checkInputBeforeUpdate(invitation, status);
+
+    if (status == WorkspaceInvitationStatus.ACCEPTED) {
+      await this.workSpaceMemberService.create({
+        workspaceId: workspaceId,
+        role: WorkspaceMemberRole.MEMBER,
+        userId: invitedUserId,
+      });
+    }
 
     invitation.status = status;
     return await this.workSpaceInvitationRepository.save(invitation);

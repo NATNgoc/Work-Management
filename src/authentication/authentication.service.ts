@@ -2,9 +2,11 @@ import {
   ConflictException,
   HttpException,
   HttpStatus,
+  Inject,
   Injectable,
   InternalServerErrorException,
   UnauthorizedException,
+  forwardRef,
 } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { SignUpDto } from './dto/sign-up.authentication.dto';
@@ -16,6 +18,7 @@ import { SessionService } from './session.service';
 @Injectable()
 export class AuthenticationService {
   constructor(
+    @Inject(forwardRef(() => UsersService))
     private readonly usersService: UsersService,
     private readonly keyService: KeyService,
     private readonly sessionService: SessionService,
@@ -58,7 +61,7 @@ export class AuthenticationService {
     return user;
   }
 
-  private async verifyPassword(
+  async verifyPassword(
     plainTextPassword: string,
     hashedPassword: string,
   ): Promise<void> {

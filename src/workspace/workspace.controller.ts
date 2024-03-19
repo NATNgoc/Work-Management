@@ -10,16 +10,11 @@ import {
   Req,
 } from '@nestjs/common';
 import { UpdateWorkspaceDto } from './dto/update-workspace.dto';
-import { SystemparamsService } from 'src/systemparams/systemparams.service';
-import { ConfigKey } from 'src/common/constaints';
 import { JwtAccessTokenGuard } from 'src/authentication/guards/jwt-access-token.guard';
 import { CreateWorkspaceDto } from './dto/create-workspace.dto';
 import { Workspace } from './entities/workspace.entity';
 import { Request } from 'express';
 import { WorkspaceService } from './workspace.service';
-import { CreateAndDeleteWorkspaceInvitationDto } from '../workspace-invitation/dto/create-workspace-invitation.dto';
-import { WorkspaceInvitationService } from '../workspace-invitation/workspace-invitation.service';
-
 @Controller('workspaces')
 export class WorkspaceController {
   constructor(private readonly workspaceService: WorkspaceService) {}
