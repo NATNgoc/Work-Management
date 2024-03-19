@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { WorkspaceController } from './workspace.controller';
 import { ConfigModule } from '@nestjs/config';
 import { SystemparamsService } from 'src/systemparams/systemparams.service';
@@ -20,7 +20,7 @@ import { WorkspaceMemberModule } from 'src/workspace-member/workspace-member.mod
     SystemparamsModule,
     TypeOrmModule.forFeature([WorkspaceMember, Workspace]),
     UsersModule,
-    WorkspaceMemberModule,
+    forwardRef(() => WorkspaceMemberModule),
   ],
   controllers: [WorkspaceController],
   providers: [WorkspaceService],

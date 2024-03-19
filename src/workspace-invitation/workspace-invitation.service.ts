@@ -128,8 +128,8 @@ export class WorkspaceInvitationService {
     }
 
     const [invitedUser, invitingUser] = await Promise.all([
-      this.userServivce.checkExistsById(invitedUserId),
-      this.userServivce.checkExistsById(invitingUserId),
+      this.userServivce.findById(invitedUserId),
+      this.userServivce.findById(invitingUserId),
     ]);
 
     if (!invitedUser || !invitingUser) {
@@ -181,8 +181,8 @@ export class WorkspaceInvitationService {
     }
 
     const [invitedUser, invitingUser] = await Promise.all([
-      this.userServivce.checkExistsById(invitedUserId),
-      this.userServivce.checkExistsById(invitingUserId),
+      this.userServivce.findById(invitedUserId),
+      this.userServivce.findById(invitingUserId),
     ]);
 
     if (!invitedUser || !invitingUser) {

@@ -51,8 +51,12 @@ export class UsersService {
     return await this.userRepository.findOne({ where: { email: email } });
   }
 
-  async checkExistsById(id: string): Promise<User | null> {
-    return await this.userRepository.findOne({ where: { id: id } });
+  async checkExistsById(id: string): Promise<Boolean | null> {
+    const result = await this.userRepository.findOne({
+      where: { id: id },
+      select: { id: true },
+    });
+    return result != null ? true : false;
   }
 
   async createNew(createUserDto: CreateUserDto): Promise<User> {

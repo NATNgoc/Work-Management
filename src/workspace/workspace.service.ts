@@ -1,8 +1,10 @@
 import {
   ConflictException,
+  Inject,
   Injectable,
   UnauthorizedException,
   UseGuards,
+  forwardRef,
 } from '@nestjs/common';
 import { CreateWorkspaceDto } from './dto/create-workspace.dto';
 import { UpdateWorkspaceDto } from './dto/update-workspace.dto';
@@ -22,6 +24,7 @@ export class WorkspaceService {
     @InjectRepository(Workspace)
     private readonly workSpaceRepository: Repository<Workspace>,
     private readonly systemParamService: SystemparamsService,
+    @Inject(forwardRef(() => WorkspaceMemberService))
     private readonly workSpaceMemberService: WorkspaceMemberService,
   ) {}
 
