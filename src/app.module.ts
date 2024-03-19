@@ -8,11 +8,12 @@ import { AuthenticationModule } from './authentication/authentication.module';
 import * as Joi from '@hapi/joi';
 import { GlobalExceptionFilter } from './exceptionFilter/exception-filter';
 import { WorkspaceModule } from './workspace/workspace.module';
-import { TaskModule } from './task/task.module';
 import { NotificationModule } from './notification/notification.module';
 import { SystemparamsModule } from './systemparams/systemparams.module';
 import { WorkspaceInvitationModule } from './workspace-invitation/workspace-invitation.module';
 import { WorkspaceMemberModule } from './workspace-member/workspace-member.module';
+import { TaskAssignmentModule } from './task-assignment/task-assignment.module';
+import { TaskModule } from './task/task.module';
 
 @Module({
   imports: [
@@ -31,11 +32,12 @@ import { WorkspaceMemberModule } from './workspace-member/workspace-member.modul
     DatabaseModule,
     AuthenticationModule,
     WorkspaceModule,
-    TaskModule,
     NotificationModule,
     SystemparamsModule,
     WorkspaceInvitationModule,
     WorkspaceMemberModule,
+    TaskAssignmentModule,
+    TaskModule,
   ],
   controllers: [AppController],
   providers: [
