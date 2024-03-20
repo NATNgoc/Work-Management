@@ -23,7 +23,9 @@ export class Task {
   @Column('uuid', { name: 'workspace_id' })
   workspaceId: string;
 
-  @ManyToOne(() => Workspace, (workspace) => workspace.id)
+  @ManyToOne(() => Workspace, (workspace) => workspace.id, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'workspace_id' })
   workspace: Workspace;
 

@@ -34,21 +34,28 @@ export class TaskController {
     return this.taskService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {}
+  @Delete(':id')
+  @UseGuards(JwtAccessTokenGuard)
+  async delete(@Param('id') id: string, @Req() req: Request) {
+    return await this.taskService.deleteById(id, req.user.id);
+  }
 
   @Patch(':id')
   @UseGuards(JwtAccessTokenGuard)
-  async updateGeneralInfo(
+  async update(
     @Param('id') id: string,
     @Body() updateTaskDto: UpdateGeneralTaskInfoDto,
     @Req() req: Request,
   ) {
-    return this.taskService.updateGeneralInfo(req.user.id, id, updateTaskDto);
+    return this.taskService.update(req.user.id, id, updateTaskDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.taskService.remove(+id);
   }
+
+  @Patch(':id/status')
+  @UseGuards(JwtAccessTokenGuard)
+  updateStatus() {}
 }

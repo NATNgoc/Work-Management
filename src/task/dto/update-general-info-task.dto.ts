@@ -1,4 +1,5 @@
 import {
+  IsBoolean,
   IsDateString,
   IsOptional,
   IsString,
@@ -21,6 +22,10 @@ export class UpdateGeneralTaskInfoDto {
   @IsDateString()
   @Validate(DueDateGreaterThanCurrentDate)
   dueDate: Date;
+
+  @IsOptional()
+  @IsBoolean()
+  isDone: boolean;
 }
 
 export default UpdateGeneralTaskInfoDto;

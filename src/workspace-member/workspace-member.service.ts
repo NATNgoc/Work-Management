@@ -72,13 +72,6 @@ export class WorkspaceMemberService {
     });
   }
 
-  // async delete(
-  //   userIds: string,
-  //   workSpaceId,
-  // ): Promise<WorkspaceMember[] | null> {
-  //   // return await this.workSpaceMemberRepository.delete()
-  // }
-
   async create(
     createWorkspaceMemberData: CreateWorkspaceMemberDto,
   ): Promise<WorkspaceMember | null> {
@@ -132,9 +125,39 @@ export class WorkspaceMemberService {
     });
   }
 
+  async findOneWithWorkSpace(
+    workSpaceId: string,
+    userId: string,
+  ): Promise<WorkspaceMember | null> {
+    return await this.workSpaceMemberRepository.findOne({
+      where: {
+        userId: userId,
+        workspaceId: workSpaceId,
+      },
+      relations: ['workspace'],
+    });
+  }
+
   update() {}
 
-  remove(id: number) {
-    return `This action removes a #${id} workspace`;
+  async delete(
+    workSpaceId: string,
+    deleteUserId: string,
+    requestUserId: string,
+  ): Promise<WorkspaceMember> {
+    const [deleteMember, ownerMember] = await Promise.all([
+      this.findOneWithWorkSpace(workSpaceId, deleteUserId),
+      this.findOne(workSpaceId, requestUserId),
+    ]);
+    if (!deleteMember && !ownerMember) {
+      throw new NotFoundException('some user are not belong to this workspace');
+    }
+
+    if (deleteMember.workspace.owner_id != requestUserId)
+      throw new UnauthorizedException(
+        'You dont have permission to delete this member',
+      );
+
+    return await this.workSpaceMemberRepository.remove(deleteMember);
   }
 }

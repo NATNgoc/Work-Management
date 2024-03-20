@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   Req,
+  Query,
 } from '@nestjs/common';
 import { UpdateWorkspaceDto } from './dto/update-workspace.dto';
 import { JwtAccessTokenGuard } from 'src/authentication/guards/jwt-access-token.guard';
@@ -15,6 +16,9 @@ import { CreateWorkspaceDto } from './dto/create-workspace.dto';
 import { Workspace } from './entities/workspace.entity';
 import { Request } from 'express';
 import { WorkspaceService } from './workspace.service';
+import FindQueryDto from './dto/find-query.dto';
+import UserRole from 'src/enum/user-role.enum';
+import RoleGuard from 'src/authentication/guards/role.guard';
 @Controller('workspaces')
 export class WorkspaceController {
   constructor(private readonly workspaceService: WorkspaceService) {}
@@ -33,23 +37,14 @@ export class WorkspaceController {
     );
   }
 
-  @Delete()
-  @UseGuards(JwtAccessTokenGuard)
-  async delete(
-    @Req() req: Request,
-    @Body() createWorkSpaceData: CreateWorkspaceDto,
-  ): Promise<Workspace> {
-    return await this.workspaceService.create(
-      {
-        ...createWorkSpaceData,
-      },
-      req.user.id,
-    );
-  }
-
   @Get()
-  findAll() {
-    return this.workspaceService.findAll();
+  @UseGuards(RoleGuard(UserRole.ADMIN))
+  @UseGuards(JwtAccessTokenGuard)
+  async findAll(
+    @Query() query: FindQueryDto,
+    @Req() req: Request,
+  ): Promise<Workspace[]> {
+    return await this.workspaceService.findAll(query, req.user);
   }
 
   @Patch(':id')
@@ -63,7 +58,11 @@ export class WorkspaceController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.workspaceService.remove(+id);
+  @UseGuards(JwtAccessTokenGuard)
+  async remove(
+    @Param('id') id: string,
+    @Req() req: Request,
+  ): Promise<Workspace | null> {
+    return await this.workspaceService.remove(req.user.id, id);
   }
 }

@@ -22,7 +22,9 @@ export class WorkspaceInvitation {
   @PrimaryColumn('uuid', { name: 'invited_user_id' })
   invitedUserId: string;
 
-  @ManyToOne(() => Workspace, (workspace) => workspace.id)
+  @ManyToOne(() => Workspace, (workspace) => workspace.id, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'workspace_id' })
   public workspace: Workspace;
 

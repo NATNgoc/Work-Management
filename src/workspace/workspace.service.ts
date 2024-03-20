@@ -2,6 +2,7 @@ import {
   ConflictException,
   Inject,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
   UseGuards,
   forwardRef,
@@ -17,6 +18,9 @@ import { WorkspaceMemberService } from '../workspace-member/workspace-member.ser
 import { WorkspaceMemberRole } from '../enum/workspace-member-role.enum';
 import { Transactional } from 'typeorm-transactional';
 import { User } from 'src/users/entities/users.entity';
+import { NotFoundError } from 'rxjs';
+import FindQueryDto from './dto/find-query.dto';
+import UserRole from 'src/enum/user-role.enum';
 
 @Injectable()
 export class WorkspaceService {
@@ -62,8 +66,33 @@ export class WorkspaceService {
     return result;
   }
 
-  findAll() {
-    return `This action returns all workspace`;
+  async findAll(queryData: FindQueryDto, requestUser: User) {
+    const queryBuilder =
+      this.workSpaceRepository.createQueryBuilder('workspaces');
+
+    let { ownerId, search, type, startDate, endDate } = queryData;
+    if (requestUser.role != UserRole.ADMIN) {
+      ownerId = requestUser.id;
+    }
+    ownerId &&
+      queryBuilder.andWhere('workspaces.owner_id= :ownerId', { ownerId });
+    type && queryBuilder.andWhere('workspaces.type= :type', { type });
+    startDate &&
+      queryBuilder.andWhere('workspaces.created_at>= :startDate', {
+        startDate,
+      });
+    endDate &&
+      queryBuilder.andWhere('workspaces.created_at<= :endDate', { endDate });
+    if (search) {
+      queryBuilder
+        .andWhere('LOWER(workspaces.name) LIKE LOWER(:search)', {
+          search: `%${search}%`,
+        })
+        .orWhere('LOWER(workspaces.description) LIKE LOWER(:search)', {
+          search: `%${search}%`,
+        });
+    }
+    return await queryBuilder.getMany();
   }
 
   async findOne(id: string): Promise<Workspace | null> {
@@ -80,6 +109,15 @@ export class WorkspaceService {
       },
     });
     return !result ? false : true;
+  }
+
+  async findOneWithUser(workspaceId: string) {
+    return await this.workSpaceRepository.findOne({
+      where: {
+        id: workspaceId,
+      },
+      relations: ['owner'],
+    });
   }
 
   async update(
@@ -107,7 +145,16 @@ export class WorkspaceService {
     return result;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} workspace`;
+  async remove(
+    requestUserId: string,
+    workspaceId: string,
+  ): Promise<Workspace | null> {
+    const workSpace = await this.findOne(workspaceId);
+    if (!workSpace) throw new NotFoundException('Workspace is not exist');
+    if (workSpace.owner_id != requestUserId)
+      throw new UnauthorizedException(
+        'You dont have permission to delete this workspace',
+      );
+    return await this.workSpaceRepository.remove(workSpace);
   }
 }

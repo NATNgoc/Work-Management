@@ -10,7 +10,7 @@ import {
   Req,
 } from '@nestjs/common';
 import { TaskAssignmentService } from './task-assignment.service';
-import { CreateTaskAssignmentDto } from './dto/create-task-assignment.dto';
+import { CreateAndDeleteTaskAssignmentDto } from './dto/create-task-assignment.dto';
 import { UpdateTaskAssignmentDto } from './dto/update-task-assignment.dto';
 import { JwtAccessTokenGuard } from 'src/authentication/guards/jwt-access-token.guard';
 import { Request } from 'express';
@@ -21,7 +21,7 @@ export class TaskAssignmentController {
   @Post()
   @UseGuards(JwtAccessTokenGuard)
   async create(
-    @Body() createTaskAssignmentDto: CreateTaskAssignmentDto,
+    @Body() createTaskAssignmentDto: CreateAndDeleteTaskAssignmentDto,
     @Param('id') id: string,
     @Req() req: Request,
   ) {
@@ -50,8 +50,17 @@ export class TaskAssignmentController {
     return this.taskAssignmentService.update(+id, updateTaskAssignmentDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.taskAssignmentService.remove(+id);
+  @Delete()
+  @UseGuards(JwtAccessTokenGuard)
+  remove(
+    @Body() deleteData: CreateAndDeleteTaskAssignmentDto,
+    @Param('id') id: string,
+    @Req() req: Request,
+  ) {
+    return this.taskAssignmentService.delete(
+      id,
+      req.user.id,
+      deleteData.userId_assigned_to,
+    );
   }
 }

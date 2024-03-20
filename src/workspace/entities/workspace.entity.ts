@@ -2,6 +2,8 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -9,6 +11,7 @@ import {
 import { WorkspaceMember } from '../../workspace-member/entities/workspace-member.entity';
 import WorkspaceType from 'src/enum/workspace-type.enum';
 import { Task } from 'src/task/entities/task.entity';
+import { User } from 'src/users/entities/users.entity';
 
 @Entity({ name: 'workspaces' })
 export class Workspace {
@@ -17,6 +20,10 @@ export class Workspace {
 
   @Column('uuid')
   owner_id: string;
+
+  @ManyToOne(() => User, (user) => user.id)
+  @JoinColumn({ name: 'owner_id' })
+  owner: User;
 
   @Column()
   name: string;

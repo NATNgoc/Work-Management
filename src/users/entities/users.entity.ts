@@ -1,8 +1,10 @@
 import { Exclude } from 'class-transformer';
 import { Session } from 'src/authentication/entities/session.entity';
+import UserRole from 'src/enum/user-role.enum';
 import { TaskAssignment } from 'src/task-assignment/entities/task-assignment.entity';
 import { Task } from 'src/task/entities/task.entity';
 import { WorkspaceMember } from 'src/workspace-member/entities/workspace-member.entity';
+import { Workspace } from 'src/workspace/entities/workspace.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -11,11 +13,6 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from 'typeorm';
-
-export enum UserRole {
-  ADMIN = 'admin',
-  USER = 'user',
-}
 
 @Entity({ name: 'users' })
 export class User {
@@ -69,4 +66,7 @@ export class User {
     (taskAssignment) => taskAssignment.userAssignedBy,
   )
   public assignedTasksByUser: TaskAssignment[];
+
+  @OneToMany(() => Workspace, (workspace) => workspace.owner)
+  public workspaces: Workspace[];
 }

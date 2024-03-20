@@ -24,6 +24,27 @@ export class TaskService {
     private readonly workSpaceMemberService: WorkspaceMemberService,
   ) {}
 
+  async deleteById(
+    taskId: string,
+    requestUserId: string,
+  ): Promise<Task | null> {
+    const currentTask = await this.taskRepository.findOneBy({ id: taskId });
+    if (!currentTask) {
+      throw new NotFoundException('Task is not existing');
+    }
+    const currentMember = await this.workSpaceMemberService.findOne(
+      currentTask.workspaceId,
+      requestUserId,
+    );
+    if (!currentMember) {
+      throw new NotFoundException('User is not belong to this workspace');
+    }
+    if (!this.checkEditTaskPermission(currentTask, currentMember)) {
+      throw new UnauthorizedException("User can't delete");
+    }
+    return await this.taskRepository.remove(currentTask);
+  }
+
   async create(
     requestUserId: string,
     createTaskData: CreateTaskDto,
@@ -75,7 +96,7 @@ export class TaskService {
     return false;
   }
 
-  async updateGeneralInfo(
+  async update(
     requestUserId: string,
     taskId: string,
     updateData: UpdateGeneralTaskInfoDto,
@@ -106,7 +127,7 @@ export class TaskService {
       .update(Task)
       .set({ ...updateData })
       .where('id = :id', { id: taskId })
-      .returning('*') // Trả về tất cả các trường của thực thể sau khi cập nhật
+      .returning('*')
       .execute();
 
     return result.raw[0];
@@ -120,10 +141,6 @@ export class TaskService {
     return await this.taskRepository.findOneBy({
       id: id,
     });
-  }
-
-  update(id: number, updateTaskDto: UpdateTaskDto) {
-    return `This action updates a #${id} task`;
   }
 
   remove(id: number) {

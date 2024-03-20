@@ -14,21 +14,21 @@ export class TaskAssignment {
   @PrimaryColumn('uuid', { name: 'task_id' })
   taskId: string;
 
-  @ManyToOne(() => Task, (task) => task.id)
+  @ManyToOne(() => Task, (task) => task.id, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'task_id' })
   task: Task;
 
   @PrimaryColumn('uuid', { name: 'userId_assigned_to' })
   userIdAssignedTo: string;
 
-  @ManyToOne(() => User, (user) => user.id)
+  @ManyToOne(() => User, (user) => user.id, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'userId_assigned_to' })
   userAssignedTo: User;
 
   @PrimaryColumn('uuid', { name: 'userId_assigned_by' })
   userIdAssignedBy: string;
 
-  @ManyToOne(() => User, (user) => user.id)
+  @ManyToOne(() => User, (user) => user.id, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'userId_assigned_by' })
   userAssignedBy: User;
 
