@@ -1,4 +1,5 @@
 import {
+  ForbiddenException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -40,7 +41,7 @@ export class TaskService {
       throw new NotFoundException('User is not belong to this workspace');
     }
     if (!this.checkEditTaskPermission(currentTask, currentMember)) {
-      throw new UnauthorizedException("User can't delete");
+      throw new ForbiddenException("User can't delete");
     }
     return await this.taskRepository.remove(currentTask);
   }
@@ -119,7 +120,7 @@ export class TaskService {
     }
 
     if (!this.checkEditTaskPermission(currentTask, currentMember)) {
-      throw new UnauthorizedException("User can't edit this task");
+      throw new ForbiddenException("User can't edit this task");
     }
 
     const result = await this.taskRepository

@@ -7,7 +7,7 @@ import {
 } from 'class-validator';
 import WorkspaceMemberRole from 'src/enum/workspace-member-role.enum';
 
-export class FindQueryDto {
+export class FindAllWorkSpaceDto {
   @IsString()
   @IsNotEmpty()
   @IsOptional()
@@ -30,4 +30,4 @@ export class FindQueryDto {
   endDate: Date;
 }
 
-export default FindQueryDto;
+export default FindAllWorkSpaceDto;

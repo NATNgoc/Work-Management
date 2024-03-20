@@ -19,7 +19,7 @@ import { WorkspaceMemberRole } from '../enum/workspace-member-role.enum';
 import { Transactional } from 'typeorm-transactional';
 import { User } from 'src/users/entities/users.entity';
 import { NotFoundError } from 'rxjs';
-import FindQueryDto from './dto/find-query.dto';
+import FindAllWorkSpaceDto from './dto/find-query.dto';
 import UserRole from 'src/enum/user-role.enum';
 
 @Injectable()
@@ -66,7 +66,7 @@ export class WorkspaceService {
     return result;
   }
 
-  async findAll(queryData: FindQueryDto, requestUser: User) {
+  async findAll(queryData: FindAllWorkSpaceDto, requestUser: User) {
     const queryBuilder =
       this.workSpaceRepository.createQueryBuilder('workspaces');
 

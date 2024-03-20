@@ -16,7 +16,7 @@ import { CreateWorkspaceDto } from './dto/create-workspace.dto';
 import { Workspace } from './entities/workspace.entity';
 import { Request } from 'express';
 import { WorkspaceService } from './workspace.service';
-import FindQueryDto from './dto/find-query.dto';
+import FindAllWorkSpaceDto from './dto/find-query.dto';
 import UserRole from 'src/enum/user-role.enum';
 import RoleGuard from 'src/authentication/guards/role.guard';
 @Controller('workspaces')
@@ -41,7 +41,7 @@ export class WorkspaceController {
   @UseGuards(RoleGuard(UserRole.ADMIN))
   @UseGuards(JwtAccessTokenGuard)
   async findAll(
-    @Query() query: FindQueryDto,
+    @Query() query: FindAllWorkSpaceDto,
     @Req() req: Request,
   ): Promise<Workspace[]> {
     return await this.workspaceService.findAll(query, req.user);

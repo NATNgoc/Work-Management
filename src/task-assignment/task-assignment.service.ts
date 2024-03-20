@@ -1,5 +1,6 @@
 import {
   ConflictException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -78,7 +79,7 @@ export class TaskAssignmentService {
           : currentMembers[1],
       )
     ) {
-      throw new UnauthorizedException("User can't assign");
+      throw new ForbiddenException("User can't assign");
     }
     const result = await this.taskAssignmentRepo.create({
       taskId: taskId,
@@ -110,7 +111,7 @@ export class TaskAssignmentService {
       );
 
     if (!this.checkEditAssignmentPermission(curentAssignment, currentMember))
-      throw new UnauthorizedException(
+      throw new ForbiddenException(
         'You dont have permission to delete this assignment',
       );
     return await this.taskAssignmentRepo.remove(curentAssignment);

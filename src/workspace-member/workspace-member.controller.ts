@@ -2,8 +2,10 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   Param,
   Patch,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -13,6 +15,8 @@ import { Request } from 'express';
 import { WorkspaceMemberService } from './workspace-member.service';
 import DeleteMember from './dto/delete-member.dto';
 import { WorkspaceMember } from './entities/workspace-member.entity';
+import RoleGuard from 'src/authentication/guards/role.guard';
+import UserRole from 'src/enum/user-role.enum';
 @Controller('workspaces/:id/members')
 export class WorkspaceMemberController {
   constructor(
@@ -31,6 +35,12 @@ export class WorkspaceMemberController {
       req.user.id,
       updateData.role,
     );
+  }
+
+  @Get()
+  @UseGuards(JwtAccessTokenGuard)
+  async findAll(): Promise<WorkspaceMember[]> {
+    return null;
   }
 
   @Delete('')

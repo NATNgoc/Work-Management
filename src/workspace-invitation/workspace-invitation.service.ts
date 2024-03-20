@@ -4,6 +4,7 @@ import WorkspaceInvitationStatus from 'src/enum/workspace-invitation-status.enum
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   ConflictException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -91,7 +92,7 @@ export class WorkspaceInvitationService {
 
     const isOwner: boolean = invitingUser.id == workspace.owner_id;
     if (!isOwner) {
-      throw new UnauthorizedException("User's not permited to do that");
+      throw new ForbiddenException("User's not permited to do that");
     }
 
     const result = this.workSpaceInvitationRepository.create({
@@ -137,7 +138,7 @@ export class WorkspaceInvitationService {
 
     const isOwner: boolean = invitingUser.id == workspace.owner_id;
     if (!isOwner) {
-      throw new UnauthorizedException("User's not permited to do that");
+      throw new ForbiddenException("User's not permited to do that");
     }
 
     const result = await this.workSpaceInvitationRepository.delete({

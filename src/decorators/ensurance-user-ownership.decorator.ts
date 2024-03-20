@@ -1,6 +1,7 @@
 import {
   createParamDecorator,
   ExecutionContext,
+  ForbiddenException,
   UnauthorizedException,
 } from '@nestjs/common';
 
@@ -11,7 +12,7 @@ export const EnsureUserOwnership = createParamDecorator(
     const userId = request.user.id;
 
     if (id !== userId) {
-      throw new UnauthorizedException(
+      throw new ForbiddenException(
         'You can only perform CRUD operations for yourself',
       );
     }

@@ -1,5 +1,6 @@
 import {
   ConflictException,
+  ForbiddenException,
   Inject,
   Injectable,
   NotFoundException,
@@ -15,6 +16,7 @@ import { CreateWorkspaceMemberDto } from '../workspace/dto/create-workspace-memb
 import { Transactional } from 'typeorm-transactional';
 import { WorkspaceService } from 'src/workspace/workspace.service';
 import { UsersService } from 'src/users/users.service';
+import FindAllMembersDto from './dto/find-all-member.dto';
 
 @Injectable()
 export class WorkspaceMemberService {
@@ -47,9 +49,7 @@ export class WorkspaceMemberService {
 
     const isOwner = curWorkSpace.owner_id === requestUserId;
     if (!isOwner) {
-      throw new UnauthorizedException(
-        "You aren't the owner of this workspace!",
-      );
+      throw new ForbiddenException("You aren't the owner of this workspace!");
     }
 
     if (role == WorkspaceMemberRole.OWNER) {
@@ -111,8 +111,18 @@ export class WorkspaceMemberService {
     );
   }
 
-  findAll() {
-    return `This action returns all workspace`;
+  async findAll(
+    requestUserId: string,
+    workSpaceId: string,
+    queryData: FindAllMembersDto,
+  ) {
+    const curMember = await this.workSpaceMemberRepository.findOneBy({
+      userId: requestUserId,
+      workspaceId: workSpaceId,
+    });
+    if (!curMember) {
+      throw new ForbiddenException('User dont have permission');
+    }
   }
 
   async findOne(
@@ -154,7 +164,7 @@ export class WorkspaceMemberService {
     }
 
     if (deleteMember.workspace.owner_id != requestUserId)
-      throw new UnauthorizedException(
+      throw new ForbiddenException(
         'You dont have permission to delete this member',
       );
 
