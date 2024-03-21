@@ -19,7 +19,9 @@ import { WorkspaceService } from './workspace.service';
 import FindAllWorkSpaceDto from './dto/find-query.dto';
 import UserRole from 'src/enum/user-role.enum';
 import RoleGuard from 'src/authentication/guards/role.guard';
+import { ApiTags } from '@nestjs/swagger';
 @Controller('workspaces')
+@ApiTags('Workspace')
 export class WorkspaceController {
   constructor(private readonly workspaceService: WorkspaceService) {}
 

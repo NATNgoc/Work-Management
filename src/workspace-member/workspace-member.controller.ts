@@ -17,7 +17,9 @@ import DeleteMember from './dto/delete-member.dto';
 import { WorkspaceMember } from './entities/workspace-member.entity';
 import RoleGuard from 'src/authentication/guards/role.guard';
 import UserRole from 'src/enum/user-role.enum';
+import { ApiTags } from '@nestjs/swagger';
 @Controller('workspaces/:id/members')
+@ApiTags('Workspace member')
 export class WorkspaceMemberController {
   constructor(
     private readonly workSpaceMemberService: WorkspaceMemberService,

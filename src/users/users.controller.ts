@@ -14,7 +14,9 @@ import { EnsureUserOwnership } from 'src/decorators/ensurance-user-ownership.dec
 import { changePasswordDto } from './dto/change-passwork-user.dto';
 import { Request } from 'express';
 import { User } from './entities/users.entity';
+import { ApiTags } from '@nestjs/swagger';
 @Controller('users')
+@ApiTags('User')
 export class UsersController {
   constructor(private readonly userService: UsersService) {}
 

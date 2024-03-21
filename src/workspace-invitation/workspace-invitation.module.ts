@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { WorkspaceInvitation } from 'src/workspace-invitation/enitities/workspace-invitation.entity';
 import { WorkspaceInvitationService } from './workspace-invitation.service';
-import { WorkspacdeInvitationController } from './workspacde-invitation.controller';
+import { WorkspacdeInvitationController } from './WorkspacdeInvitationController';
 import { UsersModule } from 'src/users/users.module';
 import { WorkspaceModule } from 'src/workspace/workspace.module';
 import { WorkspaceMember } from 'src/workspace-member/entities/workspace-member.entity';

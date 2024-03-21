@@ -15,8 +15,10 @@ import { JwtAccessTokenGuard } from 'src/authentication/guards/jwt-access-token.
 import { Request } from 'express';
 import { Task } from './entities/task.entity';
 import UpdateGeneralTaskInfoDto from './dto/update-general-info-task.dto';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('tasks')
+@ApiTags('Task')
 export class TaskController {
   constructor(private readonly taskService: TaskService) {}
 

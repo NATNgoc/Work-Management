@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { WorkspacdeInvitationController } from './workspacde-invitation.controller';
+import { WorkspacdeInvitationController } from './WorkspacdeInvitationController';
 
 describe('WorkspacdeInvitationController', () => {
   let controller: WorkspacdeInvitationController;

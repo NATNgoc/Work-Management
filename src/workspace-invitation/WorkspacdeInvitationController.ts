@@ -13,10 +13,9 @@ import { CreateAndDeleteWorkspaceInvitationDto } from './dto/create-workspace-in
 import { Request } from 'express';
 import { WorkspaceInvitationService } from './workspace-invitation.service';
 import { UpdateWorkspaceInvitationDto } from './dto/update-workspace-invitation.dto';
-import { ApiTags } from '@nestjs/swagger';
 
 @Controller('workspaces/:id/invitations')
-@ApiTags('Workspace invitation')
+// @ApiTags('Workspace invitation')
 export class WorkspacdeInvitationController {
   constructor(
     private readonly workspaceInvitationService: WorkspaceInvitationService,

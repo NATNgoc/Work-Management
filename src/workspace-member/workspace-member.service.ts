@@ -17,6 +17,7 @@ import { Transactional } from 'typeorm-transactional';
 import { WorkspaceService } from 'src/workspace/workspace.service';
 import { UsersService } from 'src/users/users.service';
 import FindAllMembersDto from './dto/find-all-member.dto';
+import { User } from 'src/users/entities/users.entity';
 
 @Injectable()
 export class WorkspaceMemberService {
@@ -123,6 +124,22 @@ export class WorkspaceMemberService {
     if (!curMember) {
       throw new ForbiddenException('User dont have permission');
     }
+    const queryBuilder =
+      this.workSpaceMemberRepository.createQueryBuilder('workspace_members');
+    const { role, startDate } = queryData;
+    queryBuilder.andWhere('workspace_members.workspace_id= :workspace_id', {
+      workspace_id: workSpaceId,
+    });
+    role &&
+      queryBuilder.andWhere('workspace_members.role= :role', {
+        role: queryData.role,
+      });
+    startDate &&
+      queryBuilder.andWhere('workspace_members.created_at>= :startDate', {
+        startDate: queryData.startDate,
+      });
+
+    // return queryBuilder.innerJoinAndSelect('workspace_members.user', User);
   }
 
   async findOne(

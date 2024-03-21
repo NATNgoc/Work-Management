@@ -21,7 +21,10 @@ import { JwtRefreshTokenGuard } from './guards/jwt-refresh-token.guard';
 import { User } from 'src/users/entities/users.entity';
 import { randomUUID } from 'crypto';
 import { SessionService } from './session.service';
+import { ApiTags } from '@nestjs/swagger';
+
 @Controller('auth')
+@ApiTags('Authentication')
 @UseInterceptors(ClassSerializerInterceptor)
 export class AuthenticationController {
   constructor(

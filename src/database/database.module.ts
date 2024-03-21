@@ -18,7 +18,7 @@ import { addTransactionalDataSource } from 'typeorm-transactional';
         password: configService.get('POSTGRES_PASSWORD'),
         database: configService.get('POSTGRES_DB'),
         entities: entities,
-        synchronize: true,
+        synchronize: false,
         logging: true,
       }),
       async dataSourceFactory(options) {

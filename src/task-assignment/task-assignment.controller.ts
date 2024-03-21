@@ -14,7 +14,9 @@ import { CreateAndDeleteTaskAssignmentDto } from './dto/create-task-assignment.d
 import { UpdateTaskAssignmentDto } from './dto/update-task-assignment.dto';
 import { JwtAccessTokenGuard } from 'src/authentication/guards/jwt-access-token.guard';
 import { Request } from 'express';
+import { ApiTags } from '@nestjs/swagger';
 @Controller('tasks/:id/assignments')
+@ApiTags('Task Assignment')
 export class TaskAssignmentController {
   constructor(private readonly taskAssignmentService: TaskAssignmentService) {}
 
