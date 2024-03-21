@@ -13,6 +13,7 @@ import { JwtRefreshTokenStrategy } from './stragegies/jwt-refresh-token.stragegy
 import { User } from 'src/users/entities/users.entity';
 import { Session } from './entities/session.entity';
 import { SessionService } from './session.service';
+import { MailModule } from 'src/mail/mail.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { SessionService } from './session.service';
     JwtModule.register({}),
     TypeOrmModule.forFeature([User, Session]),
     PassportModule,
+    MailModule,
   ],
   controllers: [AuthenticationController],
   providers: [

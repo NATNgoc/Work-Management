@@ -26,10 +26,15 @@ export class JwtRefreshTokenStrategy extends PassportStrategy(
     });
   }
 
-  async validate(request: Request, payload: TokenPayload): Promise<User> {
-    if (!(await this.sessionService.findById(payload.session_id))) {
+  async validate(request: Request, payload: TokenPayload): Promise<boolean> {
+    if (
+      !(await this.sessionService.checkExistById(
+        payload.session_id,
+        payload.user_id,
+      ))
+    ) {
       throw new UnauthorizedException();
     }
-    throw new UnauthorizedException();
+    return true;
   }
 }

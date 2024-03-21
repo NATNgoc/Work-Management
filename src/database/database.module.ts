@@ -1,9 +1,15 @@
+import { CacheModule } from '@nestjs/cache-manager';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+
 import { entities } from 'src/entity';
 import { DataSource } from 'typeorm';
-import { addTransactionalDataSource } from 'typeorm-transactional';
+import {
+  addTransactionalDataSource,
+  deleteDataSourceByName,
+} from 'typeorm-transactional';
+import { RedisOptions } from './redis-options';
 
 @Module({
   imports: [
@@ -18,7 +24,7 @@ import { addTransactionalDataSource } from 'typeorm-transactional';
         password: configService.get('POSTGRES_PASSWORD'),
         database: configService.get('POSTGRES_DB'),
         entities: entities,
-        synchronize: false,
+        synchronize: true,
         logging: true,
       }),
       async dataSourceFactory(options) {
@@ -26,9 +32,12 @@ import { addTransactionalDataSource } from 'typeorm-transactional';
           throw new Error('Invalid options passed');
         }
 
+        deleteDataSourceByName('default');
+
         return addTransactionalDataSource(new DataSource(options));
       },
     }),
+    CacheModule.registerAsync(RedisOptions),
   ],
   exports: [TypeOrmModule],
 })

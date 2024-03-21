@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_DB: ${POSTGRES_DB}
+    container_name: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - '5433:5432'
+    networks:
+      - my-network
+
+  redis:
+    container_name: redis-db
+    image: redis
+    environment:
+      - REDIS_PORT=${REDIS_PORT}
+    ports:
+      - 6379:6379
+    networks:
+      - my-network
+    restart: unless-stopped
+    volumes:
+      - redis:/data
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nest-docker-postgres
+    env_file:
+      - .env.prod
+    ports:
+      - '2704:2704'
+    depends_on:
+      - db
+      - redis
+    volumes:
+      - ./src:/app/src
+    networks:
+      - my-network
+
+networks:
+  my-network:
+
+volumes:
+  postgres_data: {}
+  redis:
+    driver: local

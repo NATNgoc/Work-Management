@@ -22,6 +22,7 @@ import { User } from 'src/users/entities/users.entity';
 import { randomUUID } from 'crypto';
 import { SessionService } from './session.service';
 import { ApiTags } from '@nestjs/swagger';
+import { MailService } from 'src/mail/mail.service';
 
 @Controller('auth')
 @ApiTags('Authentication')
@@ -31,45 +32,30 @@ export class AuthenticationController {
     private readonly authenticationService: AuthenticationService,
     private readonly keyService: KeyService,
     private readonly sessionService: SessionService,
+    private readonly mailService: MailService,
   ) {}
 
   @HttpCode(200)
   @Post('sign-up')
   async signUp(@Body() signUpDto: SignUpDto): Promise<User | null> {
-    return this.authenticationService.signUp(signUpDto);
+    const user = await this.authenticationService.signUp(signUpDto);
+    this.mailService.sendEmail(
+      user,
+      'Đăng ký thành công',
+      '<b>Đăng ký thành công, hãy quay lại và đăng nhập bằng tài khoản mật khẩu</b>',
+    );
+    return user;
   }
 
   @UseGuards(LocalAuthGuards)
   @Post('login')
   async login(@Req() req: Request) {
-    const sessionId: string = randomUUID();
-    const [accessToken, refreshToken] =
-      await this.authenticationService.genNewPairToken(req.user.id, sessionId);
-    await this.sessionService.createNewForUser(sessionId, req.user.id);
-    return {
-      accessToken,
-      refreshToken,
-    };
+    return await this.authenticationService.login(req.user.id);
   }
 
   @UseGuards(JwtRefreshTokenGuard)
   @Post('refresh-token')
   async refreshToken(@Req() req: Request) {
-    const sessionId = randomUUID();
-    const [accessToken, refreshToken] = await Promise.all([
-      this.keyService.generateAccessToken({
-        user_id: req.user.id,
-        session_id: sessionId,
-      }),
-      this.keyService.generateRefreshToken({
-        user_id: req.user.id,
-        session_id: sessionId,
-      }), // Sử dụng phương thức phù hợp để tạo refreshToken
-    ]);
-    await this.sessionService.createNewForUser(sessionId, req.user.id);
-    return {
-      accessToken,
-      refreshToken,
-    };
+    return await this.authenticationService.refreshToken(req.user.id);
   }
 }

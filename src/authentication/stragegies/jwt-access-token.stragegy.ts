@@ -26,7 +26,12 @@ export class JwtAccessTokenStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: TokenPayload): Promise<User> {
-    if (!(await this.sessionService.findById(payload.session_id))) {
+    if (
+      !(await this.sessionService.checkExistById(
+        payload.session_id,
+        payload.user_id,
+      ))
+    ) {
       throw new UnauthorizedException('Session is out');
     }
     const user = await this.userService.findById(payload.user_id);

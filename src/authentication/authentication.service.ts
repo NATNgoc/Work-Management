@@ -15,6 +15,8 @@ import { KeyService } from './key.service';
 import { User } from 'src/users/entities/users.entity';
 import { v4 as uuidv4 } from 'uuid';
 import { SessionService } from './session.service';
+import { MailService } from 'src/mail/mail.service';
+import { randomUUID } from 'crypto';
 @Injectable()
 export class AuthenticationService {
   constructor(
@@ -22,7 +24,41 @@ export class AuthenticationService {
     private readonly usersService: UsersService,
     private readonly keyService: KeyService,
     private readonly sessionService: SessionService,
+    private readonly mailService: MailService,
   ) {}
+
+  public async login(userId: string) {
+    const sessionId: string = randomUUID();
+
+    const [pairToken, sessionResult] = await Promise.all([
+      this.genNewPairToken(userId, sessionId),
+      this.sessionService.createNewForUser(sessionId, userId),
+    ]);
+
+    return {
+      accessToken: pairToken[0],
+      refreshToken: pairToken[1],
+    };
+  }
+
+  public async refreshToken(userId: string) {
+    const sessionId = randomUUID();
+    const [accessToken, refreshToken] = await Promise.all([
+      this.keyService.generateAccessToken({
+        user_id: userId,
+        session_id: sessionId,
+      }),
+      this.keyService.generateRefreshToken({
+        user_id: userId,
+        session_id: sessionId,
+      }), // Sử dụng phương thức phù hợp để tạo refreshToken
+    ]);
+    await this.sessionService.createNewForUser(sessionId, userId);
+    return {
+      accessToken,
+      refreshToken,
+    };
+  }
 
   public async genNewPairToken(
     userId: string,

@@ -14,6 +14,7 @@ import { WorkspaceInvitationModule } from './workspace-invitation/workspace-invi
 import { WorkspaceMemberModule } from './workspace-member/workspace-member.module';
 import { TaskAssignmentModule } from './task-assignment/task-assignment.module';
 import { TaskModule } from './task/task.module';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { TaskModule } from './task/task.module';
         POSTGRES_DB: Joi.string().required(),
         PORT: Joi.number(),
       }),
+      isGlobal: true,
       envFilePath: [`.env.${process.env.NODE_ENV}`, `.env`],
     }),
     DatabaseModule,
@@ -38,6 +40,7 @@ import { TaskModule } from './task/task.module';
     WorkspaceMemberModule,
     TaskAssignmentModule,
     TaskModule,
+    MailModule,
   ],
   controllers: [AppController],
   providers: [
