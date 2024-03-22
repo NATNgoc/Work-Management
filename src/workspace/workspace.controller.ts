@@ -9,6 +9,7 @@ import {
   UseGuards,
   Req,
   Query,
+  NotFoundException,
 } from '@nestjs/common';
 import { UpdateWorkspaceDto } from './dto/update-workspace.dto';
 import { JwtAccessTokenGuard } from 'src/authentication/guards/jwt-access-token.guard';
@@ -66,5 +67,12 @@ export class WorkspaceController {
     @Req() req: Request,
   ): Promise<Workspace | null> {
     return await this.workspaceService.remove(req.user.id, id);
+  }
+  @Get(':id')
+  @UseGuards(JwtAccessTokenGuard)
+  async getWorkspace(@Param('id') id: string): Promise<Workspace> {
+    const curWorkSpace = await this.workspaceService.findOne(id);
+    if (!curWorkSpace) throw new NotFoundException('Workspace is not existing');
+    return curWorkSpace;
   }
 }

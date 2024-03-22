@@ -17,7 +17,6 @@ import {
 @Entity({ name: 'users' })
 export class User {
   @PrimaryGeneratedColumn('uuid')
-  @Exclude()
   id: string;
 
   @Column({ length: 255 })

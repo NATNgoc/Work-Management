@@ -26,6 +26,7 @@ export class WorkspaceMemberService {
     private readonly workSpaceMemberRepository: Repository<WorkspaceMember>,
     @Inject(forwardRef(() => WorkspaceService))
     private readonly workSpaceService: WorkspaceService,
+    @Inject(forwardRef(() => UsersService))
     private readonly userService: UsersService,
   ) {}
 
@@ -112,6 +113,12 @@ export class WorkspaceMemberService {
     );
   }
 
+  async getQueryBuilder() {
+    return this.workSpaceMemberRepository.createQueryBuilder(
+      'workspace_members',
+    );
+  }
+
   async findAll(
     requestUserId: string,
     workSpaceId: string,
@@ -124,22 +131,38 @@ export class WorkspaceMemberService {
     if (!curMember) {
       throw new ForbiddenException('User dont have permission');
     }
+
     const queryBuilder =
       this.workSpaceMemberRepository.createQueryBuilder('workspace_members');
-    const { role, startDate } = queryData;
-    queryBuilder.andWhere('workspace_members.workspace_id= :workspace_id', {
+
+    const { role, startDate, endDate } = queryData;
+    queryBuilder.leftJoinAndSelect('workspace_members.user', 'user');
+
+    queryBuilder.andWhere('workspace_members.workspace_id = :workspace_id', {
       workspace_id: workSpaceId,
     });
-    role &&
-      queryBuilder.andWhere('workspace_members.role= :role', {
-        role: queryData.role,
-      });
-    startDate &&
-      queryBuilder.andWhere('workspace_members.created_at>= :startDate', {
-        startDate: queryData.startDate,
-      });
 
-    // return queryBuilder.innerJoinAndSelect('workspace_members.user', User);
+    if (role) {
+      queryBuilder.andWhere('workspace_members.role = :role', {
+        role,
+      });
+    }
+
+    if (startDate && endDate) {
+      queryBuilder.andWhere(
+        'workspace_members.createdAt BETWEEN :startDate AND :endDate',
+        { startDate, endDate },
+      );
+    } else if (startDate) {
+      queryBuilder.andWhere('workspace_members.createdAt >= :startDate', {
+        startDate,
+      });
+    } else if (endDate) {
+      queryBuilder.andWhere('workspace_members.createdAt <= :endDate', {
+        endDate,
+      });
+    }
+    return await queryBuilder.getMany();
   }
 
   async findOne(

@@ -29,7 +29,6 @@ export class AuthenticationService {
 
   public async login(userId: string) {
     const sessionId: string = randomUUID();
-
     const [pairToken, sessionResult] = await Promise.all([
       this.genNewPairToken(userId, sessionId),
       this.sessionService.createNewForUser(sessionId, userId),
@@ -43,20 +42,14 @@ export class AuthenticationService {
 
   public async refreshToken(userId: string) {
     const sessionId = randomUUID();
-    const [accessToken, refreshToken] = await Promise.all([
-      this.keyService.generateAccessToken({
-        user_id: userId,
-        session_id: sessionId,
-      }),
-      this.keyService.generateRefreshToken({
-        user_id: userId,
-        session_id: sessionId,
-      }), // Sử dụng phương thức phù hợp để tạo refreshToken
+    const [pairToken, sessionResult] = await Promise.all([
+      this.genNewPairToken(userId, sessionId),
+      this.sessionService.createNewForUser(sessionId, userId),
     ]);
-    await this.sessionService.createNewForUser(sessionId, userId);
+
     return {
-      accessToken,
-      refreshToken,
+      accessToken: pairToken[0],
+      refreshToken: pairToken[1],
     };
   }
 

@@ -16,6 +16,7 @@ import { Repository } from 'typeorm';
 import TaskStatus from 'src/enum/task-status.enum';
 import { WorkspaceMember } from 'src/workspace-member/entities/workspace-member.entity';
 import WorkspaceMemberRole from 'src/enum/workspace-member-role.enum';
+import { FindTaskDto } from './dto/find-task.dto';
 
 @Injectable()
 export class TaskAssignmentService {
@@ -131,8 +132,55 @@ export class TaskAssignmentService {
     return false;
   }
 
-  findAll() {
-    return `This action returns all taskAssignment`;
+  async findAll(
+    queryData: FindTaskDto,
+    requestUserId: string,
+    taskId: string,
+  ): Promise<TaskAssignment[]> {
+    const currentTask = await this.taskService.findOne(taskId);
+    if (!currentTask) throw new NotFoundException('Task is not existing');
+    const currentMember = await this.workSpaceMemberService.findOne(
+      currentTask.workspaceId,
+      requestUserId,
+    );
+    if (!currentMember)
+      throw new ForbiddenException('User is not belong to this workspaces');
+    const { userIdAssignedTo, userIdAssignedBy, startDate, endDate } =
+      queryData;
+    const queryBuilder =
+      this.taskAssignmentRepo.createQueryBuilder('task_assignments');
+
+    if (taskId) {
+      queryBuilder.andWhere('task_assignments.task_id = :taskId', { taskId });
+    }
+
+    if (userIdAssignedTo) {
+      queryBuilder.andWhere(
+        'task_assignments.userId_assigned_to = :userIdAssignedTo',
+        { userIdAssignedTo },
+      );
+    }
+
+    if (userIdAssignedBy) {
+      queryBuilder.andWhere(
+        'task_assignments.userId_assigned_by = :userIdAssignedBy',
+        { userIdAssignedBy },
+      );
+    }
+
+    if (startDate) {
+      queryBuilder.andWhere('task_assignments.created_at >= :startDate', {
+        startDate,
+      });
+    }
+
+    if (endDate) {
+      queryBuilder.andWhere('task_assignments.created_at <= :endDate', {
+        endDate,
+      });
+    }
+
+    return await queryBuilder.getMany();
   }
 
   findOne(id: number) {

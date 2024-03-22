@@ -16,6 +16,7 @@ import TaskStatus from 'src/enum/task-status.enum';
 import { WorkspaceMember } from 'src/workspace-member/entities/workspace-member.entity';
 import { UpdateUserGeneralDto } from 'src/users/dto/update-user.dto';
 import UpdateGeneralTaskInfoDto from './dto/update-general-info-task.dto';
+import { FindUserTaskDto } from './dto/find-task.dto';
 
 @Injectable()
 export class TaskService {
@@ -134,8 +135,37 @@ export class TaskService {
     return result.raw[0];
   }
 
-  findAll() {
-    return `This action returns all task`;
+  async findAll(findData: FindUserTaskDto): Promise<Task[]> {
+    const queryBuilder = this.taskRepository.createQueryBuilder('tasks');
+    const { workspace_id, created_by, search, isDone, status, dueDate } =
+      findData;
+
+    if (workspace_id) {
+      queryBuilder.andWhere('tasks.workspace_id = :workspace_id', {
+        workspace_id,
+      });
+    }
+    if (created_by) {
+      queryBuilder.andWhere('tasks.created_by = :created_by', { created_by });
+    }
+    if (isDone !== undefined) {
+      queryBuilder.andWhere('tasks.isDone = :isDone', { isDone });
+    }
+    if (status) {
+      queryBuilder.andWhere('tasks.status = :status', { status });
+    }
+    if (dueDate) {
+      queryBuilder.andWhere('tasks.dueDate <= :dueDate', { dueDate });
+    }
+
+    if (search) {
+      queryBuilder.andWhere(
+        '(LOWER(tasks.title) LIKE LOWER(:search) OR LOWER(tasks.description) LIKE LOWER(:search))',
+        { search: `%${search}%` },
+      );
+    }
+
+    return queryBuilder.getMany();
   }
 
   async findOne(id: string): Promise<Task | null> {

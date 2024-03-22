@@ -15,6 +15,7 @@ import { UpdateTaskAssignmentDto } from './dto/update-task-assignment.dto';
 import { JwtAccessTokenGuard } from 'src/authentication/guards/jwt-access-token.guard';
 import { Request } from 'express';
 import { ApiTags } from '@nestjs/swagger';
+import { FindTaskDto } from './dto/find-task.dto';
 @Controller('tasks/:id/assignments')
 @ApiTags('Task Assignment')
 export class TaskAssignmentController {
@@ -35,21 +36,13 @@ export class TaskAssignmentController {
   }
 
   @Get()
-  findAll() {
-    return this.taskAssignmentService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.taskAssignmentService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(
+  @UseGuards(JwtAccessTokenGuard)
+  findAll(
+    @Body() queryData: FindTaskDto,
     @Param('id') id: string,
-    @Body() updateTaskAssignmentDto: UpdateTaskAssignmentDto,
+    @Req() req: Request,
   ) {
-    return this.taskAssignmentService.update(+id, updateTaskAssignmentDto);
+    return this.taskAssignmentService.findAll(queryData, req.user.id, id);
   }
 
   @Delete()

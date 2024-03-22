@@ -9,6 +9,9 @@ import { Transactional } from 'typeorm-transactional';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { RedisStore } from 'cache-manager-redis-store';
+import { Redis } from 'ioredis';
+import { InjectRedis } from '@nestjs-modules/ioredis';
+
 @Injectable()
 export class SessionService {
   redisStore: RedisStore;
@@ -80,7 +83,7 @@ export class SessionService {
   }
 
   async checkExistById(id: string, userId: string): Promise<boolean> {
-    return new Promise((resolve, reject) => {
+    return await new Promise((resolve, reject) => {
       this.redisStore.get(`${userId}:${id}`, {}, (err, result) => {
         if (err) {
           reject(err);

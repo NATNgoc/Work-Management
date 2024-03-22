@@ -19,7 +19,7 @@ import { WorkspaceMemberModule } from 'src/workspace-member/workspace-member.mod
     ConfigModule,
     SystemparamsModule,
     TypeOrmModule.forFeature([WorkspaceMember, Workspace]),
-    UsersModule,
+    forwardRef(() => UsersModule),
     forwardRef(() => WorkspaceMemberModule),
   ],
   controllers: [WorkspaceController],

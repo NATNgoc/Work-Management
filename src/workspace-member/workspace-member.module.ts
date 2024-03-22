@@ -11,7 +11,7 @@ import { UsersModule } from 'src/users/users.module';
   imports: [
     TypeOrmModule.forFeature([WorkspaceMember]),
     forwardRef(() => WorkspaceModule),
-    UsersModule,
+    forwardRef(() => UsersModule),
   ],
   controllers: [WorkspaceMemberController],
   providers: [WorkspaceMemberService],

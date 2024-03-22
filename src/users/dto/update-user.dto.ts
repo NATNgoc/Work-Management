@@ -1,5 +1,4 @@
-import { IsNotEmpty, IsOptional, IsString, Length } from 'class-validator';
-import { CreateUserDto } from './create-user.dto';
+import { IsNotEmpty, Length } from 'class-validator';
 import { Transform } from 'class-transformer';
 
 export class UpdateUserGeneralDto {

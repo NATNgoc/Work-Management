@@ -66,7 +66,10 @@ export class WorkspaceService {
     return result;
   }
 
-  async findAll(queryData: FindAllWorkSpaceDto, requestUser: User) {
+  async findAll(
+    queryData: FindAllWorkSpaceDto,
+    requestUser: User,
+  ): Promise<Workspace[] | null> {
     const queryBuilder =
       this.workSpaceRepository.createQueryBuilder('workspaces');
 

@@ -16,7 +16,7 @@ import { UpdateWorkspaceInvitationDto } from './dto/update-workspace-invitation.
 import { ApiTags } from '@nestjs/swagger';
 
 @Controller('workspaces/:id/invitations')
-@ApiTags('Workspace invitation')
+@ApiTags('Workspacde Invitation')
 export class WorkspacdeInvitationController {
   constructor(
     private readonly workspaceInvitationService: WorkspaceInvitationService,

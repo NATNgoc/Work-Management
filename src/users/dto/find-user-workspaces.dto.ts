@@ -1,13 +1,21 @@
 import {
   IsString,
   IsNotEmpty,
-  IsDate,
   IsOptional,
   IsEnum,
+  IsDate,
 } from 'class-validator';
 import WorkspaceMemberRole from 'src/enum/workspace-member-role.enum';
 
-export class FindAllMembersDto {
+export class FindAllUserWorkSpaceDto {
+  @IsString()
+  @IsOptional()
+  search: string;
+
+  @IsEnum(WorkspaceMemberRole)
+  @IsOptional()
+  type: string;
+
   @IsDate()
   @IsOptional()
   startDate: Date;
@@ -15,9 +23,4 @@ export class FindAllMembersDto {
   @IsDate()
   @IsOptional()
   endDate: Date;
-
-  @IsEnum(WorkspaceMemberRole)
-  role: WorkspaceMemberRole;
 }
-
-export default FindAllMembersDto;

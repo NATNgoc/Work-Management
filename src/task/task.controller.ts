@@ -32,9 +32,7 @@ export class TaskController {
   }
 
   @Get()
-  findAll() {
-    return this.taskService.findAll();
-  }
+  findAll() {}
 
   @Delete(':id')
   @UseGuards(JwtAccessTokenGuard)

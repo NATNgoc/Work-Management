@@ -5,9 +5,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import {
   ConflictException,
   ForbiddenException,
+  Inject,
   Injectable,
   NotFoundException,
   UnauthorizedException,
+  forwardRef,
 } from '@nestjs/common';
 import { WorkspaceService } from '../workspace/workspace.service';
 import { UsersService } from 'src/users/users.service';
@@ -15,6 +17,7 @@ import { WorkspaceType } from 'src/enum/workspace-type.enum';
 import { WorkspaceMemberService } from 'src/workspace-member/workspace-member.service';
 import { WorkspaceMemberRole } from '../enum/workspace-member-role.enum';
 import { Transactional } from 'typeorm-transactional';
+import { FindWorkspaceInvitationsDto } from './dto/find-workspace-invitation.dto';
 
 @Injectable()
 export class WorkspaceInvitationService {
@@ -22,9 +25,72 @@ export class WorkspaceInvitationService {
     @InjectRepository(WorkspaceInvitation)
     private readonly workSpaceInvitationRepository: Repository<WorkspaceInvitation>,
     private readonly workSpaceService: WorkspaceService,
+    @Inject(forwardRef(() => UsersService))
     private readonly userServivce: UsersService,
     private readonly workSpaceMemberService: WorkspaceMemberService,
   ) {}
+
+  async findAll(
+    queryDto: FindWorkspaceInvitationsDto,
+  ): Promise<WorkspaceInvitation[]> {
+    const {
+      workspaceId,
+      invitingUserId,
+      invitedUserId,
+      status,
+      startDate,
+      endDate,
+    } = queryDto;
+    const queryBuilder = this.workSpaceInvitationRepository.createQueryBuilder(
+      'workspace_invitations',
+    );
+
+    if (workspaceId) {
+      queryBuilder.andWhere(
+        'workspace_invitations.workspaceId = :workspaceId',
+        {
+          workspaceId,
+        },
+      );
+    }
+
+    if (invitingUserId) {
+      queryBuilder.andWhere(
+        'workspace_invitations.invitingUserId = :invitingUserId',
+        { invitingUserId },
+      );
+    }
+
+    if (invitedUserId) {
+      queryBuilder.andWhere(
+        'workspace_invitations.invitedUserId = :invitedUserId',
+        { invitedUserId },
+      );
+    }
+
+    if (status) {
+      queryBuilder.andWhere('workspace_invitations.status = :status', {
+        status,
+      });
+    }
+
+    if (startDate && endDate) {
+      queryBuilder.andWhere(
+        'workspace_invitations.createdAt BETWEEN :startDate AND :endDate',
+        { startDate, endDate },
+      );
+    } else if (startDate) {
+      queryBuilder.andWhere('workspace_invitations.createdAt >= :startDate', {
+        startDate,
+      });
+    } else if (endDate) {
+      queryBuilder.andWhere('workspace_invitations.createdAt <= :endDate', {
+        endDate,
+      });
+    }
+
+    return await queryBuilder.getMany();
+  }
 
   @Transactional()
   async updateStatus(
