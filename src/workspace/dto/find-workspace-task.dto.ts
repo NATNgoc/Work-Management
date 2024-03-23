@@ -1,23 +1,18 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
+import { PartialType } from '@nestjs/mapped-types';
+import { ApiProperty, OmitType } from '@nestjs/swagger';
 import {
   IsOptional,
   IsUUID,
   IsString,
   IsBoolean,
   IsEnum,
-  IsDate,
   IsDateString,
   IsBooleanString,
 } from 'class-validator';
 import TaskStatus from 'src/enum/task-status.enum';
+import { FindUserTaskDto } from 'src/users/dto/find-user-task.dto';
 
-export class FindUserTaskDto {
-  @IsOptional()
-  @ApiProperty({ required: false })
-  @IsUUID()
-  workspace_id?: string;
-
+export class FindWorkspaceTaskDto {
   @IsOptional()
   @ApiProperty({ required: false })
   @IsString()

@@ -1,5 +1,4 @@
 import { Exclude } from 'class-transformer';
-import { Session } from 'src/authentication/entities/session.entity';
 import UserRole from 'src/enum/user-role.enum';
 import { TaskAssignment } from 'src/task-assignment/entities/task-assignment.entity';
 import { Task } from 'src/task/entities/task.entity';
@@ -37,19 +36,16 @@ export class User {
   @Exclude()
   role: string;
 
-  @CreateDateColumn({ type: 'timestamp' })
+  @CreateDateColumn({ type: 'timestamp', name: 'created_at' })
   @Exclude()
   createdAt: Date;
 
-  @UpdateDateColumn({ type: 'timestamp' })
+  @UpdateDateColumn({ type: 'timestamp', name: 'updated_at' })
   @Exclude()
   updatedAt: Date;
 
   @OneToMany(() => WorkspaceMember, (workspaceMember) => workspaceMember.user)
   public workspaceMembers: WorkspaceMember[];
-
-  @OneToMany(() => Session, (session: Session) => session.user)
-  public sessions: Session[];
 
   @OneToMany(() => Task, (task: Task) => task.createdUser)
   public task: Task[];

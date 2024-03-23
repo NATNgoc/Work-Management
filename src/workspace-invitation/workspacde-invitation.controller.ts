@@ -13,10 +13,18 @@ import { CreateAndDeleteWorkspaceInvitationDto } from './dto/create-workspace-in
 import { Request } from 'express';
 import { WorkspaceInvitationService } from './workspace-invitation.service';
 import { UpdateWorkspaceInvitationDto } from './dto/update-workspace-invitation.dto';
-import { ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
 @Controller('workspaces/:id/invitations')
 @ApiTags('Workspacde Invitation')
+@ApiBearerAuth()
 export class WorkspacdeInvitationController {
   constructor(
     private readonly workspaceInvitationService: WorkspaceInvitationService,
@@ -24,6 +32,10 @@ export class WorkspacdeInvitationController {
 
   @Post('')
   @UseGuards(JwtAccessTokenGuard)
+  @ApiOperation({ summary: 'Invite a user to a workspace' })
+  @ApiResponse({ status: 201, description: 'User invited successfully.' })
+  @ApiParam({ name: 'id', description: 'Workspace ID' })
+  @ApiBody({ type: CreateAndDeleteWorkspaceInvitationDto })
   async inviteUserToSpace(
     @Param('id') id: string,
     @Req() req: Request,
@@ -39,6 +51,10 @@ export class WorkspacdeInvitationController {
 
   @Delete('')
   @UseGuards(JwtAccessTokenGuard)
+  @ApiOperation({ summary: 'Remove an invitation to a workspace' })
+  @ApiResponse({ status: 200, description: 'Invitation removed successfully.' })
+  @ApiParam({ name: 'id', description: 'Workspace ID' })
+  @ApiBody({ type: CreateAndDeleteWorkspaceInvitationDto })
   async removeInvitation(
     @Param('id') id: string,
     @Req() req: Request,
@@ -54,11 +70,17 @@ export class WorkspacdeInvitationController {
 
   @Patch('')
   @UseGuards(JwtAccessTokenGuard)
+  @ApiOperation({ summary: 'Update the status of a workspace invitation' })
+  @ApiResponse({
+    status: 200,
+    description: 'Invitation status updated successfully.',
+  })
+  @ApiParam({ name: 'id', description: 'Workspace ID' })
+  @ApiBody({ type: UpdateWorkspaceInvitationDto })
   async updateStatusInvitation(
     @Param('id') id: string,
     @Req() req: Request,
-    @Body()
-    updateWorkspaceInvitationData: UpdateWorkspaceInvitationDto,
+    @Body() updateWorkspaceInvitationData: UpdateWorkspaceInvitationDto,
   ) {
     return await this.workspaceInvitationService.updateStatus(
       id,

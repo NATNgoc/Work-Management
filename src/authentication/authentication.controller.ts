@@ -21,7 +21,14 @@ import { JwtRefreshTokenGuard } from './guards/jwt-refresh-token.guard';
 import { User } from 'src/users/entities/users.entity';
 import { randomUUID } from 'crypto';
 import { SessionService } from './session.service';
-import { ApiBody, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBasicAuth,
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { MailService } from 'src/mail/mail.service';
 import { LoginDto } from './dto/login.authentication.dto';
 
@@ -40,15 +47,17 @@ export class AuthenticationController {
   @Post('sign-up')
   @ApiBody({
     type: SignUpDto,
-    examples: {
-      user_1: {
-        value: {
-          email: 'nguyenatn2003@gmail.com',
-          name: 'Nguyễn Anh Tuấn Ngọc',
-          password: 'NguyenNgoc123@',
-        },
-      },
-    },
+  })
+  @HttpCode(200)
+  @Post('sign-up')
+  @ApiOperation({ summary: 'Sign up a new user' })
+  @ApiResponse({
+    status: 200,
+    description: 'User successfully signed up.',
+    type: User,
+  })
+  @ApiBody({
+    type: SignUpDto,
   })
   async signUp(@Body() signUpDto: SignUpDto): Promise<User> {
     const user = await this.authenticationService.signUp(signUpDto);
@@ -61,10 +70,22 @@ export class AuthenticationController {
   }
 
   @UseGuards(LocalAuthGuards)
+  @Post('login')
+  @ApiOperation({ summary: 'Log in a user' })
+  @ApiResponse({
+    status: 200,
+    description: 'User successfully logged in.',
+    type: 'object',
+    schema: {
+      properties: {
+        accessToken: { type: 'string' },
+        refreshToken: { type: 'string' },
+      },
+    },
+  })
   @ApiBody({
     type: LoginDto,
   })
-  @Post('login')
   async login(
     @Req() req: Request,
   ): Promise<{ accessToken: string; refreshToken: string }> {
@@ -73,6 +94,14 @@ export class AuthenticationController {
 
   @Post('refresh-token')
   @UseGuards(JwtRefreshTokenGuard)
+  @ApiOperation({ summary: 'Refresh access token' })
+  @ApiResponse({
+    status: 200,
+    description: 'Access token successfully refreshed.',
+    type: 'object',
+    schema: { properties: { accessToken: { type: 'string' } } },
+  })
+  @ApiBearerAuth()
   async refreshToken(@Req() req: Request) {
     return await this.authenticationService.refreshToken(req.user.id);
   }

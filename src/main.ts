@@ -10,7 +10,14 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
   const port = configService.get('PORT') ?? 3000;
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(
+    new ValidationPipe({
+      skipMissingProperties: true, // Bỏ qua các trường không được cung cấp
+      transform: true, // Tự động chuyển đổi các trường đầu vào thành kiểu dữ liệu tương ứng
+      whitelist: true, // Loại bỏ các trường không được trang trí bởi class-validator
+      forbidUnknownValues: true,
+    }),
+  );
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
   configSwagger(app);
   await app.listen(port);

@@ -17,15 +17,28 @@ import DeleteMember from './dto/delete-member.dto';
 import { WorkspaceMember } from './entities/workspace-member.entity';
 import RoleGuard from 'src/authentication/guards/role.guard';
 import UserRole from 'src/enum/user-role.enum';
-import { ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import FindAllMembersDto from './dto/find-all-member.dto';
 @Controller('workspaces/:id/members')
 @ApiTags('Workspace member')
+@ApiBearerAuth()
 export class WorkspaceMemberController {
   constructor(
     private readonly workSpaceMemberService: WorkspaceMemberService,
   ) {}
   @Patch('roles')
   @UseGuards(JwtAccessTokenGuard)
+  @ApiOperation({ summary: 'Grant a role to a workspace member' })
+  @ApiResponse({ status: 200, description: 'Role granted successfully.' })
+  @ApiParam({ name: 'id', description: 'Workspace ID' })
+  @ApiBody({ type: UpdateRoleMember })
   async grantRole(
     @Param('id') workSpaceId: string,
     @Req() req: Request,
@@ -41,12 +54,35 @@ export class WorkspaceMemberController {
 
   @Get()
   @UseGuards(JwtAccessTokenGuard)
-  async findAll(): Promise<WorkspaceMember[]> {
-    return null;
+  @ApiOperation({ summary: 'Find all members of a workspace' })
+  @ApiResponse({
+    status: 200,
+    description: 'Members found successfully.',
+    type: [WorkspaceMember],
+  })
+  @ApiParam({ name: 'id', description: 'Workspace ID' })
+  async findAll(
+    @Req() req: Request,
+    @Param('id') id: string,
+    @Query() queryData: FindAllMembersDto,
+  ): Promise<WorkspaceMember[]> {
+    return await this.workSpaceMemberService.findAllWithWorkspaceIdAndUserId(
+      req.user.id,
+      id,
+      queryData,
+    );
   }
 
   @Delete('')
   @UseGuards(JwtAccessTokenGuard)
+  @ApiOperation({ summary: 'Delete a member from a workspace' })
+  @ApiResponse({
+    status: 200,
+    description: 'Member deleted successfully.',
+    type: WorkspaceMember,
+  })
+  @ApiParam({ name: 'id', description: 'Workspace ID' })
+  @ApiBody({ type: DeleteMember })
   async deleteMember(
     @Param('id') workSpaceId: string,
     @Req() req: Request,

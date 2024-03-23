@@ -1,5 +1,6 @@
 import {
   ConflictException,
+  ForbiddenException,
   Inject,
   Injectable,
   NotFoundException,
@@ -21,6 +22,8 @@ import { User } from 'src/users/entities/users.entity';
 import { NotFoundError } from 'rxjs';
 import FindAllWorkSpaceDto from './dto/find-query.dto';
 import UserRole from 'src/enum/user-role.enum';
+import { FindWorkspaceTaskDto } from './dto/find-workspace-task.dto';
+import { TaskService } from 'src/task/task.service';
 
 @Injectable()
 export class WorkspaceService {
@@ -30,6 +33,8 @@ export class WorkspaceService {
     private readonly systemParamService: SystemparamsService,
     @Inject(forwardRef(() => WorkspaceMemberService))
     private readonly workSpaceMemberService: WorkspaceMemberService,
+    @Inject(forwardRef(() => TaskService))
+    private readonly taskService: TaskService,
   ) {}
 
   @Transactional()
@@ -98,6 +103,34 @@ export class WorkspaceService {
     return await queryBuilder.getMany();
   }
 
+  async findAllTasks(
+    queryData: FindWorkspaceTaskDto,
+    workspaceId: string,
+    requestUserId: string,
+  ) {
+    // Đồng thời kiểm tra sự tồn tại của workspace và thành viên trong workspace
+    const [isExistingWorkspace, isMemberInWorkspace] = await Promise.all([
+      this.checkWithId(workspaceId),
+      this.workSpaceMemberService.findOne(workspaceId, requestUserId),
+    ]);
+
+    if (!isExistingWorkspace) {
+      throw new NotFoundException(
+        `Workspace with ID "${workspaceId}" not found.`,
+      );
+    }
+    if (!isMemberInWorkspace) {
+      throw new ForbiddenException(
+        `User with ID "${requestUserId}" is not a member of workspace "${workspaceId}".`,
+      );
+    }
+
+    const tasks = await this.taskService.findAll({ ...queryData });
+
+    // Trả về danh sách tasks
+    return tasks;
+  }
+
   async findOne(id: string): Promise<Workspace | null> {
     return await this.workSpaceRepository.findOneBy({
       id: id,
@@ -128,12 +161,11 @@ export class WorkspaceService {
     updateWorkspaceDto: UpdateWorkspaceDto,
     user: User,
   ): Promise<UpdateResult | null> {
-    const isOwner =
-      await this.workSpaceMemberService.checkWithWorkSpaceRoleAndUserId(
-        id,
-        user.id,
-        WorkspaceMemberRole.OWNER,
-      );
+    const isOwner = await this.workSpaceMemberService.checkRoleUserInWorkSpace(
+      id,
+      user.id,
+      WorkspaceMemberRole.OWNER,
+    );
 
     if (!isOwner) {
       throw new UnauthorizedException('User is not permitted doing that!');

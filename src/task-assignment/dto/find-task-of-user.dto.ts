@@ -3,16 +3,20 @@ import { Type } from 'class-transformer';
 import {
   IsOptional,
   IsUUID,
-  IsString,
-  IsBoolean,
-  IsEnum,
   IsDate,
   IsDateString,
   IsBooleanString,
+  IsEnum,
+  IsString,
 } from 'class-validator';
 import TaskStatus from 'src/enum/task-status.enum';
 
-export class FindUserTaskDto {
+export enum TaskType {
+  creator = 'creator',
+  assignee = 'assignee',
+}
+
+export class FindTaskAssignmentOfUserDto {
   @IsOptional()
   @ApiProperty({ required: false })
   @IsUUID()
@@ -20,13 +24,13 @@ export class FindUserTaskDto {
 
   @IsOptional()
   @ApiProperty({ required: false })
-  @IsString()
-  search?: string;
+  @IsBooleanString()
+  isDone?: boolean;
 
   @IsOptional()
-  @IsBooleanString()
   @ApiProperty({ required: false })
-  isDone?: boolean;
+  @IsString()
+  search?: string;
 
   @IsOptional()
   @ApiProperty({ required: false })
@@ -37,4 +41,9 @@ export class FindUserTaskDto {
   @ApiProperty({ required: false })
   @IsDateString()
   dueDate?: Date;
+
+  @IsEnum(TaskType)
+  @IsOptional()
+  @ApiProperty({ required: false })
+  taskType: TaskType;
 }

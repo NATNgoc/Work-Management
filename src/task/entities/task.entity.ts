@@ -52,11 +52,11 @@ export class Task {
   dueDate: Date;
 
   @Exclude()
-  @CreateDateColumn()
+  @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
   @Exclude()
-  @UpdateDateColumn()
+  @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 
   @OneToMany(() => TaskAssignment, (taskAssignment) => taskAssignment.task)

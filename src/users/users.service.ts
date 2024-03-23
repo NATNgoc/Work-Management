@@ -23,6 +23,15 @@ import { FindUserWorkspaceInvitationsDto } from './dto/find-user-invitation.dto'
 import { WorkspaceInvitation } from 'src/workspace-invitation/enitities/workspace-invitation.entity';
 import { WorkspaceInvitationService } from 'src/workspace-invitation/workspace-invitation.service';
 import { Task } from 'src/task/entities/task.entity';
+import { TaskAssignmentService } from 'src/task-assignment/task-assignment.service';
+import {
+  FindTaskAssignmentOfUserDto,
+  TaskType,
+} from 'src/task-assignment/dto/find-task-of-user.dto';
+import { TaskAssignment } from 'src/task-assignment/entities/task-assignment.entity';
+import { FindAllWithUserDto } from 'src/workspace-member/dto/find-all-with-user.dto';
+import { WorkspaceMemberService } from 'src/workspace-member/workspace-member.service';
+import { WorkspaceMember } from 'src/workspace-member/entities/workspace-member.entity';
 @Injectable()
 export class UsersService {
   constructor(
@@ -36,23 +45,35 @@ export class UsersService {
     private readonly workspaceService: WorkspaceService,
     @Inject(forwardRef(() => WorkspaceInvitationService))
     private readonly workspaceInvitationService: WorkspaceInvitationService,
+    @Inject(forwardRef(() => TaskAssignmentService))
+    private readonly taskAssignmentService: TaskAssignmentService,
+    @Inject(forwardRef(() => WorkspaceMemberService))
+    private readonly workSpaceMemberService: WorkspaceMemberService,
   ) {}
 
   async findUserTasks(
-    queryData: FindUserTaskDto,
+    queryData: FindTaskAssignmentOfUserDto,
     userId: string,
-  ): Promise<Task[]> {
-    return await this.taskService.findAll({
-      ...queryData,
-      created_by: userId,
-    });
+  ): Promise<TaskAssignment[] | Task[]> {
+    if (queryData.taskType == TaskType.assignee) {
+      return await this.taskAssignmentService.findAllForUser(queryData, userId);
+    } else {
+      return await this.taskService.findAll({
+        created_by: userId,
+        dueDate: queryData.dueDate,
+        isDone: queryData.isDone,
+        status: queryData.status,
+        workspace_id: queryData.workspace_id,
+        search: queryData.search,
+      });
+    }
   }
 
   async findUserInvitations(
     queryData: FindUserWorkspaceInvitationsDto,
     userId: string,
   ): Promise<WorkspaceInvitation[]> {
-    const { isForward } = queryData;
+    const isForward: boolean = queryData.isForward;
     const option = {
       status: queryData.status,
       endDate: queryData.endDate,
@@ -81,15 +102,12 @@ export class UsersService {
   }
 
   async findUserWorkspaces(
-    queryData: FindAllUserWorkSpaceDto,
+    queryData: FindAllWithUserDto,
     user: User,
-  ): Promise<Workspace[]> {
-    return await this.workspaceService.findAll(
-      {
-        ...queryData,
-        ownerId: user.id,
-      },
-      user,
+  ): Promise<Workspace[] | WorkspaceMember[]> {
+    return await this.workSpaceMemberService.findAllWithUserId(
+      user.id,
+      queryData,
     );
   }
 

@@ -13,7 +13,6 @@ import { SignUpDto } from './dto/sign-up.authentication.dto';
 import * as argon2 from 'argon2';
 import { KeyService } from './key.service';
 import { User } from 'src/users/entities/users.entity';
-import { v4 as uuidv4 } from 'uuid';
 import { SessionService } from './session.service';
 import { MailService } from 'src/mail/mail.service';
 import { randomUUID } from 'crypto';

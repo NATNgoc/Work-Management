@@ -13,6 +13,7 @@ import { WorkspaceInvitationService } from '../workspace-invitation/workspace-in
 import { WorkspaceInvitation } from '../workspace-invitation/enitities/workspace-invitation.entity';
 import { WorkspaceInvitationModule } from 'src/workspace-invitation/workspace-invitation.module';
 import { WorkspaceMemberModule } from 'src/workspace-member/workspace-member.module';
+import { TaskModule } from 'src/task/task.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { WorkspaceMemberModule } from 'src/workspace-member/workspace-member.mod
     TypeOrmModule.forFeature([WorkspaceMember, Workspace]),
     forwardRef(() => UsersModule),
     forwardRef(() => WorkspaceMemberModule),
+    forwardRef(() => TaskModule),
   ],
   controllers: [WorkspaceController],
   providers: [WorkspaceService],

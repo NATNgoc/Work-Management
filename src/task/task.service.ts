@@ -1,12 +1,11 @@
 import {
+  ConflictException,
   ForbiddenException,
   Injectable,
   NotFoundException,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { CreateTaskDto } from './dto/create-task.dto';
-import { UpdateTaskDto } from './dto/update-task.dto';
-import { Not, Repository } from 'typeorm';
+import { Not, Repository, Transaction } from 'typeorm';
 import { Task } from './entities/task.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { WorkspaceService } from 'src/workspace/workspace.service';
@@ -17,6 +16,8 @@ import { WorkspaceMember } from 'src/workspace-member/entities/workspace-member.
 import { UpdateUserGeneralDto } from 'src/users/dto/update-user.dto';
 import UpdateGeneralTaskInfoDto from './dto/update-general-info-task.dto';
 import { FindUserTaskDto } from './dto/find-task.dto';
+import { Transactional } from 'typeorm-transactional';
+import UpdateTaskStatusDto from './dto/update-task-status.dto';
 
 @Injectable()
 export class TaskService {
@@ -98,7 +99,7 @@ export class TaskService {
     return false;
   }
 
-  async update(
+  async updateGeneralInfo(
     requestUserId: string,
     taskId: string,
     updateData: UpdateGeneralTaskInfoDto,
@@ -109,6 +110,12 @@ export class TaskService {
 
     if (!currentTask) {
       throw new NotFoundException('Check task id again!');
+    }
+    if ('isDone' in updateData) {
+      if (currentTask.status != TaskStatus.ACCEPTED)
+        throw new ConflictException(
+          "Task is not accepted, so you can't set done state for it",
+        );
     }
 
     const currentMember = await this.workSpaceMemberService.findOne(
@@ -148,7 +155,7 @@ export class TaskService {
     if (created_by) {
       queryBuilder.andWhere('tasks.created_by = :created_by', { created_by });
     }
-    if (isDone !== undefined) {
+    if (isDone != undefined) {
       queryBuilder.andWhere('tasks.isDone = :isDone', { isDone });
     }
     if (status) {
@@ -165,7 +172,7 @@ export class TaskService {
       );
     }
 
-    return queryBuilder.getMany();
+    return await queryBuilder.getMany();
   }
 
   async findOne(id: string): Promise<Task | null> {
@@ -176,5 +183,39 @@ export class TaskService {
 
   remove(id: number) {
     return `This action removes a #${id} task`;
+  }
+
+  @Transactional()
+  async updateTaskStatus(
+    taskId: string,
+    requestUserId,
+    updateData: UpdateTaskStatusDto,
+  ): Promise<Task> {
+    const currentTask = await this.findOne(taskId);
+    if (!currentTask) {
+      throw new NotFoundException('Task is not existed');
+    }
+    if (currentTask.status != TaskStatus.PENDING)
+      throw new ConflictException(
+        'Task status is already accepted or rejected',
+      );
+    const currentMember = await this.workSpaceMemberService.findOne(
+      currentTask.workspaceId,
+      requestUserId,
+    );
+    if (!currentMember)
+      throw new ForbiddenException('User is not beloing to this workspaces');
+
+    if (
+      currentMember.role == WorkspaceMemberRole.OWNER ||
+      currentMember.role == WorkspaceMemberRole.LEADER
+    ) {
+      throw new ForbiddenException(
+        'User is not permited edit this status of task',
+      );
+    }
+    currentTask.status = updateData.status;
+    await this.taskRepository.save(currentTask);
+    return currentTask;
   }
 }

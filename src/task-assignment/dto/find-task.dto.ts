@@ -1,26 +1,25 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsOptional, IsUUID, IsDate } from 'class-validator';
+import { IsOptional, IsUUID, IsDate, IsDateString } from 'class-validator';
 
-export class FindTaskDto {
+export class FindTaskAssignmentDto {
   @IsOptional()
-  @IsUUID()
-  taskId?: string;
-
-  @IsOptional()
+  @ApiProperty({ required: false })
   @IsUUID()
   userIdAssignedTo?: string;
 
   @IsOptional()
+  @ApiProperty({ required: false })
   @IsUUID()
   userIdAssignedBy?: string;
 
   @IsOptional()
-  @IsDate()
-  @Type(() => Date)
+  @ApiProperty({ required: false })
+  @IsDateString()
   startDate?: Date;
 
   @IsOptional()
-  @IsDate()
-  @Type(() => Date)
+  @ApiProperty({ required: false })
+  @IsDateString()
   endDate?: Date;
 }

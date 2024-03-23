@@ -18,6 +18,7 @@ import { WorkspaceService } from 'src/workspace/workspace.service';
 import { UsersService } from 'src/users/users.service';
 import FindAllMembersDto from './dto/find-all-member.dto';
 import { User } from 'src/users/entities/users.entity';
+import { FindAllWithUserDto } from './dto/find-all-with-user.dto';
 
 @Injectable()
 export class WorkspaceMemberService {
@@ -99,7 +100,7 @@ export class WorkspaceMemberService {
     return await this.workSpaceMemberRepository.save(result);
   }
 
-  async checkWithWorkSpaceRoleAndUserId(
+  async checkRoleUserInWorkSpace(
     workSpaceId: string,
     userId: string,
     role: WorkspaceMemberRole,
@@ -119,7 +120,51 @@ export class WorkspaceMemberService {
     );
   }
 
-  async findAll(
+  async findAllWithUserId(
+    requestUserId: string,
+    queryData: FindAllWithUserDto,
+  ): Promise<WorkspaceMember[]> {
+    const queryBuilder =
+      this.workSpaceMemberRepository.createQueryBuilder('workspace_members');
+
+    const { role, startDate, endDate, search, type } = queryData;
+
+    queryBuilder.leftJoinAndSelect('workspace_members.workspace', 'workspace');
+
+    queryBuilder.andWhere('workspace_members.user_id = :userId', {
+      userId: requestUserId,
+    });
+
+    if (role) {
+      queryBuilder.andWhere('workspace_members.role = :role', { role });
+    }
+
+    if (startDate) {
+      queryBuilder.andWhere('workspace_members.created_at >= :startDate', {
+        startDate,
+      });
+    }
+    if (endDate) {
+      queryBuilder.andWhere('workspace_members.created_at <= :endDate', {
+        endDate,
+      });
+    }
+
+    if (search) {
+      queryBuilder.andWhere(
+        '(workspace.name LIKE :search OR workspace.description LIKE :search)',
+        { search: `%${search}%` },
+      );
+    }
+
+    if (type) {
+      queryBuilder.andWhere('workspace.type = :type', { type });
+    }
+
+    return await queryBuilder.getMany();
+  }
+
+  async findAllWithWorkspaceIdAndUserId(
     requestUserId: string,
     workSpaceId: string,
     queryData: FindAllMembersDto,
@@ -129,7 +174,7 @@ export class WorkspaceMemberService {
       workspaceId: workSpaceId,
     });
     if (!curMember) {
-      throw new ForbiddenException('User dont have permission');
+      throw new ForbiddenException("User aren't be member of this workspace");
     }
 
     const queryBuilder =
@@ -154,11 +199,11 @@ export class WorkspaceMemberService {
         { startDate, endDate },
       );
     } else if (startDate) {
-      queryBuilder.andWhere('workspace_members.createdAt >= :startDate', {
+      queryBuilder.andWhere('workspace_members.created_at >= :startDate', {
         startDate,
       });
     } else if (endDate) {
-      queryBuilder.andWhere('workspace_members.createdAt <= :endDate', {
+      queryBuilder.andWhere('workspace_members.created_at <= :endDate', {
         endDate,
       });
     }

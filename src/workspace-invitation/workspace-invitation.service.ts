@@ -144,7 +144,9 @@ export class WorkspaceInvitationService {
 
     const workspace = await this.workSpaceService.findOne(workspaceId);
     if (!workspace || workspace.type == WorkspaceType.PERSONAL) {
-      throw new ConflictException('Workspace is not valid');
+      throw new ConflictException(
+        'Workspace type is suitable for only one working',
+      );
     }
 
     const [invitedUser, invitingUser] = await Promise.all([
@@ -153,7 +155,7 @@ export class WorkspaceInvitationService {
     ]);
 
     if (!invitedUser || !invitingUser) {
-      throw new NotFoundException('UserId is not valid!');
+      throw new NotFoundException('UserId input is unvalid');
     }
 
     const isOwner: boolean = invitingUser.id == workspace.owner_id;
@@ -170,6 +172,7 @@ export class WorkspaceInvitationService {
     return await this.workSpaceInvitationRepository.save(result);
   }
 
+  @Transactional()
   async delete(
     workspaceId: string,
     invitingUserId: string,

@@ -1,17 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
 import {
-  IsString,
-  IsNotEmpty,
-  IsDate,
+  IsDateString,
   IsOptional,
   IsEnum,
-  IsDateString,
+  IsString,
+  IsBoolean,
 } from 'class-validator';
-import * as dayjs from 'dayjs';
 import WorkspaceMemberRole from 'src/enum/workspace-member-role.enum';
+import WorkspaceType from 'src/enum/workspace-type.enum';
 
-export class FindAllMembersDto {
+export class FindAllWithUserDto {
   @IsDateString()
   @IsOptional()
   @ApiProperty({ required: false })
@@ -26,6 +25,12 @@ export class FindAllMembersDto {
   @IsEnum(WorkspaceMemberRole)
   @ApiProperty({ required: false })
   role: WorkspaceMemberRole;
-}
 
-export default FindAllMembersDto;
+  @IsString()
+  @ApiProperty({ required: false })
+  search: string;
+
+  @IsEnum(WorkspaceType)
+  @ApiProperty({ required: false })
+  type: WorkspaceType;
+}

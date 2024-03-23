@@ -10,6 +10,8 @@ import { WorkspaceMemberModule } from 'src/workspace-member/workspace-member.mod
 import { WorkspaceModule } from 'src/workspace/workspace.module';
 import { WorkspaceInvitation } from 'src/workspace-invitation/enitities/workspace-invitation.entity';
 import { WorkspaceInvitationModule } from 'src/workspace-invitation/workspace-invitation.module';
+import { TaskAssignment } from 'src/task-assignment/entities/task-assignment.entity';
+import { TaskAssignmentModule } from 'src/task-assignment/task-assignment.module';
 
 @Module({
   imports: [
@@ -19,6 +21,7 @@ import { WorkspaceInvitationModule } from 'src/workspace-invitation/workspace-in
     forwardRef(() => WorkspaceMemberModule),
     forwardRef(() => WorkspaceModule),
     forwardRef(() => WorkspaceInvitationModule),
+    TaskAssignmentModule,
   ],
   controllers: [UsersController],
   providers: [UsersService],

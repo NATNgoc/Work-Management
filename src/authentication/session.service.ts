@@ -1,16 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Session } from './entities/session.entity';
-import { Repository } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
-import * as dayjs from 'dayjs';
 import { ConfigKey } from 'src/common/constaints';
-import { Transactional } from 'typeorm-transactional';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { RedisStore } from 'cache-manager-redis-store';
-import { Redis } from 'ioredis';
-import { InjectRedis } from '@nestjs-modules/ioredis';
 
 @Injectable()
 export class SessionService {

@@ -11,7 +11,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { KeyService } from './key.service';
 import { JwtRefreshTokenStrategy } from './stragegies/jwt-refresh-token.stragegy';
 import { User } from 'src/users/entities/users.entity';
-import { Session } from './entities/session.entity';
 import { SessionService } from './session.service';
 import { MailModule } from 'src/mail/mail.module';
 
@@ -20,7 +19,7 @@ import { MailModule } from 'src/mail/mail.module';
     forwardRef(() => UsersModule),
     ConfigModule,
     JwtModule.register({}),
-    TypeOrmModule.forFeature([User, Session]),
+    TypeOrmModule.forFeature([User]),
     PassportModule,
     MailModule,
   ],

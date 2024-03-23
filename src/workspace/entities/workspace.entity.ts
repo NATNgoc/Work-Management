@@ -47,9 +47,9 @@ export class Workspace {
   @OneToMany(() => Task, (task) => task.workspace)
   public task: Task;
 
-  @CreateDateColumn()
-  created_at: Date;
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
 
-  @UpdateDateColumn()
-  updated_at: Date;
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt: Date;
 }
