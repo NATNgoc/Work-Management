@@ -10,6 +10,4 @@ COPY . .
 
 RUN npm run build
 
-# FROM base
-# COPY dist . 
 CMD [ "npm", "run", "start:prod" ]

@@ -12,6 +12,6 @@ export default new DataSource({
   username: process.env.POSTGRES_USER,
   password: process.env.POSTGRES_PASSWORD,
   database: process.env.POSTGRES_DB,
-  entities: entities,
-  migrations: [Initial1710993979782],
+  entities: ['dist/**/*.entity{.ts,.js}'],
+  migrations: ['dist/**/migrations/*{.ts,.js}'],
 });

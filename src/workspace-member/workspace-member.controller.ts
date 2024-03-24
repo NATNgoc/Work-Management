@@ -33,6 +33,7 @@ export class WorkspaceMemberController {
   constructor(
     private readonly workSpaceMemberService: WorkspaceMemberService,
   ) {}
+
   @Patch('roles')
   @UseGuards(JwtAccessTokenGuard)
   @ApiOperation({ summary: 'Grant a role to a workspace member' })
@@ -60,6 +61,7 @@ export class WorkspaceMemberController {
     description: 'Members found successfully.',
     type: [WorkspaceMember],
   })
+
   @ApiParam({ name: 'id', description: 'Workspace ID' })
   async findAll(
     @Req() req: Request,
