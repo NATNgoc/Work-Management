@@ -43,7 +43,7 @@ export class WorkspaceService {
     ownerId: string,
   ): Promise<Workspace | null> {
     const numberWorkspaceOfUser = await this.workSpaceRepository.countBy({
-      owner_id: ownerId,
+      ownerId: ownerId,
     });
 
     const maximumWorkSpace = await this.systemParamService.getValueByKey(
@@ -58,7 +58,7 @@ export class WorkspaceService {
 
     const newWorkSpace = this.workSpaceRepository.create({
       ...createWorkSpaceData,
-      owner_id: ownerId,
+      ownerId: ownerId,
     });
 
     const result = await this.workSpaceRepository.save(newWorkSpace);
@@ -86,11 +86,11 @@ export class WorkspaceService {
       queryBuilder.andWhere('workspaces.owner_id= :ownerId', { ownerId });
     type && queryBuilder.andWhere('workspaces.type= :type', { type });
     startDate &&
-      queryBuilder.andWhere('workspaces.created_at>= :startDate', {
+      queryBuilder.andWhere('workspaces.createdAt>= :startDate', {
         startDate,
       });
     endDate &&
-      queryBuilder.andWhere('workspaces.created_at<= :endDate', { endDate });
+      queryBuilder.andWhere('workspaces.createdAt<= :endDate', { endDate });
     if (search) {
       queryBuilder
         .andWhere('LOWER(workspaces.name) LIKE LOWER(:search)', {
@@ -186,7 +186,7 @@ export class WorkspaceService {
   ): Promise<Workspace | null> {
     const workSpace = await this.findOne(workspaceId);
     if (!workSpace) throw new NotFoundException('Workspace is not exist');
-    if (workSpace.owner_id != requestUserId)
+    if (workSpace.ownerId != requestUserId)
       throw new UnauthorizedException(
         'You dont have permission to delete this workspace',
       );

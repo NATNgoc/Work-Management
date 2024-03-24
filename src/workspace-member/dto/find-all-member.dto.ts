@@ -19,7 +19,6 @@ export class FindAllMembersDto {
 
   @IsDateString()
   @IsOptional()
-  @Type(() => Date)
   @ApiProperty({ required: false })
   endDate: Date;
 

@@ -230,12 +230,12 @@ export class TaskAssignmentService {
       );
     }
     if (startDate) {
-      queryBuilder.andWhere('task_assignments.created_at >= :startDate', {
+      queryBuilder.andWhere('task_assignments.createdAt >= :startDate', {
         startDate,
       });
     }
     if (endDate) {
-      queryBuilder.andWhere('task_assignments.created_at <= :endDate', {
+      queryBuilder.andWhere('task_assignments.createdAt <= :endDate', {
         endDate,
       });
     }

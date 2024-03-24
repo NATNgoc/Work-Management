@@ -19,7 +19,7 @@ export class Workspace {
   id: string;
 
   @Column('uuid')
-  owner_id: string;
+  ownerId: string;
 
   @ManyToOne(() => User, (user) => user.id)
   @JoinColumn({ name: 'owner_id' })

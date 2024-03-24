@@ -50,7 +50,7 @@ export class WorkspaceMemberService {
       throw new NotFoundException('Workspace is not exists');
     }
 
-    const isOwner = curWorkSpace.owner_id === requestUserId;
+    const isOwner = curWorkSpace.ownerId === requestUserId;
     if (!isOwner) {
       throw new ForbiddenException("You aren't the owner of this workspace!");
     }
@@ -140,12 +140,12 @@ export class WorkspaceMemberService {
     }
 
     if (startDate) {
-      queryBuilder.andWhere('workspace_members.created_at >= :startDate', {
+      queryBuilder.andWhere('workspace_members.createdAt >= :startDate', {
         startDate,
       });
     }
     if (endDate) {
-      queryBuilder.andWhere('workspace_members.created_at <= :endDate', {
+      queryBuilder.andWhere('workspace_members.createdAt <= :endDate', {
         endDate,
       });
     }
@@ -199,11 +199,11 @@ export class WorkspaceMemberService {
         { startDate, endDate },
       );
     } else if (startDate) {
-      queryBuilder.andWhere('workspace_members.created_at >= :startDate', {
+      queryBuilder.andWhere('workspace_members.createdAt >= :startDate', {
         startDate,
       });
     } else if (endDate) {
-      queryBuilder.andWhere('workspace_members.created_at <= :endDate', {
+      queryBuilder.andWhere('workspace_members.createdAt <= :endDate', {
         endDate,
       });
     }
@@ -248,7 +248,7 @@ export class WorkspaceMemberService {
       throw new NotFoundException('some user are not belong to this workspace');
     }
 
-    if (deleteMember.workspace.owner_id != requestUserId)
+    if (deleteMember.workspace.ownerId != requestUserId)
       throw new ForbiddenException(
         'You dont have permission to delete this member',
       );

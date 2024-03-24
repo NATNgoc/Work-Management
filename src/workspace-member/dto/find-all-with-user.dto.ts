@@ -18,7 +18,6 @@ export class FindAllWithUserDto {
 
   @IsDateString()
   @IsOptional()
-  @Type(() => Date)
   @ApiProperty({ required: false })
   endDate: Date;
 

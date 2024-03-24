@@ -1,7 +1,7 @@
 import { DataSource } from 'typeorm';
 import { config } from 'dotenv';
 import { entities } from './src/entity';
-import { Initial1710993979782 } from 'src/migrations/1710993979782-initial';
+// import { Initial1710993979782 } from 'src/migrations/1710993979782-initial';
 
 config();
 
@@ -13,5 +13,5 @@ export default new DataSource({
   password: process.env.POSTGRES_PASSWORD,
   database: process.env.POSTGRES_DB,
   entities: ['dist/**/*.entity{.ts,.js}'],
-  migrations: ['dist/**/migrations/*{.ts,.js}'],
+  migrations: ['dist/migrations/*{.ts,.js}'],
 });

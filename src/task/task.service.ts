@@ -153,7 +153,7 @@ export class TaskService {
       });
     }
     if (created_by) {
-      queryBuilder.andWhere('tasks.created_by = :created_by', { created_by });
+      queryBuilder.andWhere('tasks.createdBy = :created_by', { created_by });
     }
     if (isDone != undefined) {
       queryBuilder.andWhere('tasks.isDone = :isDone', { isDone });

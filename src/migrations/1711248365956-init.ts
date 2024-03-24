@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class Initial1710993979782 implements MigrationInterface {
-  name = 'Initial1710993979782';
+export class Init1711248365956 implements MigrationInterface {
+  name = 'Init1711248365956';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
@@ -20,7 +20,7 @@ export class Initial1710993979782 implements MigrationInterface {
       `CREATE TYPE "public"."task_status_enum" AS ENUM('accepted', 'pending', 'rejected')`,
     );
     await queryRunner.query(
-      `CREATE TABLE "task" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "workspace_id" uuid NOT NULL, "created_by" uuid NOT NULL, "title" character varying(255) NOT NULL, "description" text, "isDone" boolean NOT NULL DEFAULT false, "status" "public"."task_status_enum" NOT NULL DEFAULT 'pending', "dueDate" date NOT NULL, "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_fb213f79ee45060ba925ecd576e" PRIMARY KEY ("id"))`,
+      `CREATE TABLE "task" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "workspace_id" uuid NOT NULL, "created_by" uuid NOT NULL, "title" character varying(255) NOT NULL, "description" text, "isDone" boolean NOT NULL DEFAULT false, "status" "public"."task_status_enum" NOT NULL DEFAULT 'pending', "dueDate" date NOT NULL, "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_fb213f79ee45060ba925ecd576e" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
       `CREATE TABLE "task_assignments" ("task_id" uuid NOT NULL, "userId_assigned_to" uuid NOT NULL, "userId_assigned_by" uuid NOT NULL, "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_3f18a2e00603dc48a07996b0e6d" PRIMARY KEY ("task_id", "userId_assigned_to", "userId_assigned_by"))`,
@@ -29,19 +29,16 @@ export class Initial1710993979782 implements MigrationInterface {
       `CREATE TYPE "public"."users_role_enum" AS ENUM('admin', 'user')`,
     );
     await queryRunner.query(
-      `CREATE TABLE "users" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying(255) NOT NULL, "email" character varying(255) NOT NULL, "password" character varying(255) NOT NULL, "role" "public"."users_role_enum" NOT NULL DEFAULT 'user', "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_a3ffb1c0c8416b9fc6f907b7433" PRIMARY KEY ("id"))`,
-    );
-    await queryRunner.query(
-      `CREATE TABLE "sessions" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "createdAt" TIMESTAMP NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP NOT NULL DEFAULT now(), "expiredAt" TIMESTAMP NOT NULL, "userId" uuid, CONSTRAINT "PK_3238ef96f18b355b671619111bc" PRIMARY KEY ("id"))`,
-    );
-    await queryRunner.query(
-      `CREATE TABLE "system_parameters" ("id" character varying NOT NULL, "description" character varying NOT NULL, "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), "value" jsonb NOT NULL, CONSTRAINT "PK_aa5092b6c74cc30dfcd959ce14a" PRIMARY KEY ("id"))`,
+      `CREATE TABLE "users" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying(255) NOT NULL, "email" character varying(255) NOT NULL, "password" character varying(255) NOT NULL, "role" "public"."users_role_enum" NOT NULL DEFAULT 'user', "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_a3ffb1c0c8416b9fc6f907b7433" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
       `CREATE TYPE "public"."workspace_invitations_status_enum" AS ENUM('accepted', 'pending', 'rejected')`,
     );
     await queryRunner.query(
       `CREATE TABLE "workspace_invitations" ("workspace_id" uuid NOT NULL, "inviting_user_id" uuid NOT NULL, "invited_user_id" uuid NOT NULL, "status" "public"."workspace_invitations_status_enum" NOT NULL DEFAULT 'pending', "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_32d5b4131ceafee5f8c2f1e8039" PRIMARY KEY ("workspace_id", "inviting_user_id", "invited_user_id"))`,
+    );
+    await queryRunner.query(
+      `CREATE TABLE "system_parameters" ("id" character varying NOT NULL, "description" character varying NOT NULL, "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), "value" jsonb NOT NULL, CONSTRAINT "PK_aa5092b6c74cc30dfcd959ce14a" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
       `ALTER TABLE "workspace_members" ADD CONSTRAINT "FK_4a7c584ddfe855379598b5e20fd" FOREIGN KEY ("workspace_id") REFERENCES "workspaces"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
@@ -68,9 +65,6 @@ export class Initial1710993979782 implements MigrationInterface {
       `ALTER TABLE "task_assignments" ADD CONSTRAINT "FK_299a4972c7d711da41557f0a8d2" FOREIGN KEY ("userId_assigned_by") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
-      `ALTER TABLE "sessions" ADD CONSTRAINT "FK_57de40bc620f456c7311aa3a1e6" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION`,
-    );
-    await queryRunner.query(
       `ALTER TABLE "workspace_invitations" ADD CONSTRAINT "FK_cf5df369b7a86ea3cdf18c7b56d" FOREIGN KEY ("workspace_id") REFERENCES "workspaces"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
@@ -90,9 +84,6 @@ export class Initial1710993979782 implements MigrationInterface {
     );
     await queryRunner.query(
       `ALTER TABLE "workspace_invitations" DROP CONSTRAINT "FK_cf5df369b7a86ea3cdf18c7b56d"`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "sessions" DROP CONSTRAINT "FK_57de40bc620f456c7311aa3a1e6"`,
     );
     await queryRunner.query(
       `ALTER TABLE "task_assignments" DROP CONSTRAINT "FK_299a4972c7d711da41557f0a8d2"`,
@@ -118,12 +109,11 @@ export class Initial1710993979782 implements MigrationInterface {
     await queryRunner.query(
       `ALTER TABLE "workspace_members" DROP CONSTRAINT "FK_4a7c584ddfe855379598b5e20fd"`,
     );
+    await queryRunner.query(`DROP TABLE "system_parameters"`);
     await queryRunner.query(`DROP TABLE "workspace_invitations"`);
     await queryRunner.query(
       `DROP TYPE "public"."workspace_invitations_status_enum"`,
     );
-    await queryRunner.query(`DROP TABLE "system_parameters"`);
-    await queryRunner.query(`DROP TABLE "sessions"`);
     await queryRunner.query(`DROP TABLE "users"`);
     await queryRunner.query(`DROP TYPE "public"."users_role_enum"`);
     await queryRunner.query(`DROP TABLE "task_assignments"`);

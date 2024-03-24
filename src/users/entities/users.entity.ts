@@ -38,11 +38,11 @@ export class User {
 
   @CreateDateColumn({ type: 'timestamp', name: 'created_at' })
   @Exclude()
-  createdAt: Date;
+  created_at: Date;
 
   @UpdateDateColumn({ type: 'timestamp', name: 'updated_at' })
   @Exclude()
-  updatedAt: Date;
+  updated_at: Date;
 
   @OneToMany(() => WorkspaceMember, (workspaceMember) => workspaceMember.user)
   public workspaceMembers: WorkspaceMember[];
