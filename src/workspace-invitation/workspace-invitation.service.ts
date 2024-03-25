@@ -158,7 +158,7 @@ export class WorkspaceInvitationService {
       throw new NotFoundException('UserId input is unvalid');
     }
 
-    const isOwner: boolean = invitingUser.id == workspace.ownerId;
+    const isOwner: boolean = invitingUser.id == workspace.owner_id;
     if (!isOwner) {
       throw new ForbiddenException("User's not permited to do that");
     }
@@ -205,7 +205,7 @@ export class WorkspaceInvitationService {
       throw new NotFoundException('UserId is not valid!');
     }
 
-    const isOwner: boolean = invitingUser.id == workspace.ownerId;
+    const isOwner: boolean = invitingUser.id == workspace.owner_id;
     if (!isOwner) {
       throw new ForbiddenException("User's not permited to do that");
     }

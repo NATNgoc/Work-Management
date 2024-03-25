@@ -21,7 +21,7 @@ export class Task {
   id: string;
 
   @Column('uuid', { name: 'workspace_id' })
-  workspaceId: string;
+  workspace_id: string;
 
   @ManyToOne(() => Workspace, (workspace) => workspace.id, {
     onDelete: 'CASCADE',
@@ -30,7 +30,7 @@ export class Task {
   workspace: Workspace;
 
   @Column('uuid', { name: 'created_by' })
-  createdBy: string;
+  created_by: string;
 
   @ManyToOne(() => User, (user) => user.id)
   @JoinColumn({ name: 'created_by' })

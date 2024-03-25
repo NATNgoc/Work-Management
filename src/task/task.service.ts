@@ -36,7 +36,7 @@ export class TaskService {
       throw new NotFoundException('Task is not existing');
     }
     const currentMember = await this.workSpaceMemberService.findOne(
-      currentTask.workspaceId,
+      currentTask.workspace_id,
       requestUserId,
     );
     if (!currentMember) {
@@ -65,8 +65,8 @@ export class TaskService {
       title: createTaskData.title,
       description: createTaskData.description,
       dueDate: createTaskData.dueDate,
-      workspaceId: createTaskData.workSpaceId,
-      createdBy: requestUserId,
+      workspace_id: createTaskData.workSpaceId,
+      created_by: requestUserId,
     });
 
     if (
@@ -86,7 +86,7 @@ export class TaskService {
     task: Task,
     workSpaceMemeber: WorkspaceMember,
   ): boolean {
-    if (task.createdBy == workSpaceMemeber.userId) {
+    if (task.created_by == workSpaceMemeber.userId) {
       return true;
     }
 
@@ -119,7 +119,7 @@ export class TaskService {
     }
 
     const currentMember = await this.workSpaceMemberService.findOne(
-      currentTask.workspaceId,
+      currentTask.workspace_id,
       requestUserId,
     );
 
@@ -200,7 +200,7 @@ export class TaskService {
         'Task status is already accepted or rejected',
       );
     const currentMember = await this.workSpaceMemberService.findOne(
-      currentTask.workspaceId,
+      currentTask.workspace_id,
       requestUserId,
     );
     if (!currentMember)

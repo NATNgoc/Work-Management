@@ -18,8 +18,8 @@ export class Workspace {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column('uuid')
-  ownerId: string;
+  @Column('uuid', { name: 'owner_id' })
+  owner_id: string;
 
   @ManyToOne(() => User, (user) => user.id)
   @JoinColumn({ name: 'owner_id' })

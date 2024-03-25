@@ -59,7 +59,7 @@ export class TaskAssignmentService {
 
     const currentMembers = await this.workSpaceMemberService.findManyByIds(
       [requestUserId, assignedUserId],
-      currentTask.workspaceId,
+      currentTask.workspace_id,
     );
     if (currentMembers.length != 2) {
       if (
@@ -103,7 +103,7 @@ export class TaskAssignmentService {
     if (!curentAssignment)
       throw new NotFoundException('Assignments is not existing');
     const currentMember = await this.workSpaceMemberService.findOne(
-      curentAssignment.task.workspaceId,
+      curentAssignment.task.workspace_id,
       requestUserId,
     );
     if (!currentMember)
@@ -190,7 +190,7 @@ export class TaskAssignmentService {
     const currentTask = await this.taskService.findOne(taskId);
     if (!currentTask) throw new NotFoundException('Task is not existing');
     const currentMember = await this.workSpaceMemberService.findOne(
-      currentTask.workspaceId,
+      currentTask.workspace_id,
       requestUserId,
     );
     if (!currentMember)

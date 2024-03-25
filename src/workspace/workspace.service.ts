@@ -43,7 +43,7 @@ export class WorkspaceService {
     ownerId: string,
   ): Promise<Workspace | null> {
     const numberWorkspaceOfUser = await this.workSpaceRepository.countBy({
-      ownerId: ownerId,
+      owner_id: ownerId,
     });
 
     const maximumWorkSpace = await this.systemParamService.getValueByKey(
@@ -58,7 +58,7 @@ export class WorkspaceService {
 
     const newWorkSpace = this.workSpaceRepository.create({
       ...createWorkSpaceData,
-      ownerId: ownerId,
+      owner_id: ownerId,
     });
 
     const result = await this.workSpaceRepository.save(newWorkSpace);
@@ -186,7 +186,7 @@ export class WorkspaceService {
   ): Promise<Workspace | null> {
     const workSpace = await this.findOne(workspaceId);
     if (!workSpace) throw new NotFoundException('Workspace is not exist');
-    if (workSpace.ownerId != requestUserId)
+    if (workSpace.owner_id != requestUserId)
       throw new UnauthorizedException(
         'You dont have permission to delete this workspace',
       );

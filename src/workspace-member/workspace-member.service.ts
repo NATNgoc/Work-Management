@@ -50,7 +50,7 @@ export class WorkspaceMemberService {
       throw new NotFoundException('Workspace is not exists');
     }
 
-    const isOwner = curWorkSpace.ownerId === requestUserId;
+    const isOwner = curWorkSpace.owner_id === requestUserId;
     if (!isOwner) {
       throw new ForbiddenException("You aren't the owner of this workspace!");
     }
@@ -248,7 +248,7 @@ export class WorkspaceMemberService {
       throw new NotFoundException('some user are not belong to this workspace');
     }
 
-    if (deleteMember.workspace.ownerId != requestUserId)
+    if (deleteMember.workspace.owner_id != requestUserId)
       throw new ForbiddenException(
         'You dont have permission to delete this member',
       );
