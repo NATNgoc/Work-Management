@@ -59,7 +59,7 @@ export class TaskAssignmentService {
 
     const currentMembers = await this.workSpaceMemberService.findManyByIds(
       [requestUserId, assignedUserId],
-      currentTask.workspace_id,
+      currentTask.workspaceId,
     );
     if (currentMembers.length != 2) {
       if (
@@ -103,7 +103,7 @@ export class TaskAssignmentService {
     if (!curentAssignment)
       throw new NotFoundException('Assignments is not existing');
     const currentMember = await this.workSpaceMemberService.findOne(
-      curentAssignment.task.workspace_id,
+      curentAssignment.task.workspaceId,
       requestUserId,
     );
     if (!currentMember)
@@ -190,7 +190,7 @@ export class TaskAssignmentService {
     const currentTask = await this.taskService.findOne(taskId);
     if (!currentTask) throw new NotFoundException('Task is not existing');
     const currentMember = await this.workSpaceMemberService.findOne(
-      currentTask.workspace_id,
+      currentTask.workspaceId,
       requestUserId,
     );
     if (!currentMember)
@@ -215,17 +215,17 @@ export class TaskAssignmentService {
 
     // Áp dụng các điều kiện truy vấn
     if (taskId) {
-      queryBuilder.andWhere('task_assignments.task_id = :taskId', { taskId });
+      queryBuilder.andWhere('task_assignments.taskId = :taskId', { taskId });
     }
     if (userIdAssignedTo) {
       queryBuilder.andWhere(
-        'task_assignments.userId_assigned_to = :userIdAssignedTo',
+        'task_assignments.userIdAssignedTo = :userIdAssignedTo',
         { userIdAssignedTo },
       );
     }
     if (userIdAssignedBy) {
       queryBuilder.andWhere(
-        'task_assignments.userId_assigned_by = :userIdAssignedBy',
+        'task_assignments.userIdAssignedBy = :userIdAssignedBy',
         { userIdAssignedBy },
       );
     }

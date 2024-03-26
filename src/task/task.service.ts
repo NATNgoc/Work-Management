@@ -36,7 +36,7 @@ export class TaskService {
       throw new NotFoundException('Task is not existing');
     }
     const currentMember = await this.workSpaceMemberService.findOne(
-      currentTask.workspace_id,
+      currentTask.workspaceId,
       requestUserId,
     );
     if (!currentMember) {
@@ -65,8 +65,8 @@ export class TaskService {
       title: createTaskData.title,
       description: createTaskData.description,
       dueDate: createTaskData.dueDate,
-      workspace_id: createTaskData.workSpaceId,
-      created_by: requestUserId,
+      workspaceId: createTaskData.workSpaceId,
+      createdBy: requestUserId,
     });
 
     if (
@@ -86,7 +86,7 @@ export class TaskService {
     task: Task,
     workSpaceMemeber: WorkspaceMember,
   ): boolean {
-    if (task.created_by == workSpaceMemeber.userId) {
+    if (task.createdBy == workSpaceMemeber.userId) {
       return true;
     }
 
@@ -119,7 +119,7 @@ export class TaskService {
     }
 
     const currentMember = await this.workSpaceMemberService.findOne(
-      currentTask.workspace_id,
+      currentTask.workspaceId,
       requestUserId,
     );
 
@@ -148,7 +148,7 @@ export class TaskService {
       findData;
 
     if (workspace_id) {
-      queryBuilder.andWhere('tasks.workspace_id = :workspace_id', {
+      queryBuilder.andWhere('tasks.workspaceId = :workspace_id', {
         workspace_id,
       });
     }
@@ -200,7 +200,7 @@ export class TaskService {
         'Task status is already accepted or rejected',
       );
     const currentMember = await this.workSpaceMemberService.findOne(
-      currentTask.workspace_id,
+      currentTask.workspaceId,
       requestUserId,
     );
     if (!currentMember)

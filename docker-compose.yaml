@@ -26,7 +26,6 @@ services:
     networks:
       - my-network
     restart: unless-stopped
-
     volumes:
       - redis:/data
 
@@ -34,6 +33,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    # image: natn2003/work_management:latest
     container_name: nest-docker-postgres
     env_file:
       - .env.prod

@@ -37,8 +37,8 @@ export default class MainSeeder implements Seeder {
     const taskFactory = factoryManager.get(Task);
     for (const workspace of finalWorkSpaces) {
       await taskFactory.saveMany(10, {
-        workspace_id: workspace.id,
-        created_by: workspace.owner_id,
+        workspaceId: workspace.id,
+        createdBy: workspace.owner_id,
       });
     }
 
